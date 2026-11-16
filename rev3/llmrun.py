@@ -50,6 +50,7 @@ import hashlib
 import json
 import os
 import random
+import shutil
 import sys
 import threading
 import time
@@ -67,6 +68,29 @@ ACCOUNT = {401, 402, 403}  # auth / credit / permission: infrastructure, never a
 
 class Halt(Exception):
     pass
+
+
+def load_journal(path, repair=False):
+    """Journal records. A torn final line (process or disk failed mid-write) is dropped, and with repair=True the
+    file is truncated back to the last complete record so appends stay valid. A bad line anywhere else halts."""
+    with open(path, "rb") as f:
+        raw = f.read()
+    lines, recs, good_end = raw.split(b"\n"), [], 0
+    for i, ln in enumerate(lines):
+        if not ln.strip():
+            good_end += len(ln) + 1
+            continue
+        try:
+            recs.append(json.loads(ln))
+            good_end += len(ln) + 1
+        except ValueError:
+            if i < len(lines) - 1 and any(x.strip() for x in lines[i + 1:]):
+                raise Halt(f"journal {path} has a corrupt record at line {i + 1}; inspect before resuming")
+            if repair:
+                with open(path, "r+b") as f:
+                    f.truncate(min(good_end, len(raw)))
+            break
+    return recs
 
 
 class Deferred(Exception):
@@ -167,6 +191,7 @@ class Limiter:
 
 class Runner:
     backoff = 1.0  # seconds scale for retry waits (tests set 0)
+    repasses = 2  # automatic extra passes over tasks aborted on transient errors
     progress_every = 10.0  # seconds between progress lines on stderr; 0 disables
 
     def __init__(self, run_dir, cfg, manifest, transport=None, resume=False):
@@ -227,8 +252,7 @@ class Runner:
     def _open(self):
         intents, fresh = {}, not os.path.exists(self.path) or os.path.getsize(self.path) == 0
         if not fresh:
-            with open(self.path) as f:
-                lines = [json.loads(x) for x in f if x.strip()]
+            lines = load_journal(self.path, repair=True)
             h = lines[0]
             if h.get("type") != "header" or h["config_sha256"] != self.hash or h.get("manifest_sha256") != self.mhash:
                 self.close()
@@ -252,9 +276,16 @@ class Runner:
                          "manifest_sha256": self.mhash, "t": time.time()})
 
     def _write(self, rec):
-        self.f.write(json.dumps(rec, sort_keys=True) + "\n")
-        self.f.flush()
-        os.fsync(self.f.fileno())
+        if getattr(self, "journal_broken", False):  # after one failed write nothing else is appended
+            raise Halt("journal unavailable after a failed write; free disk space, then --resume")
+        try:
+            self.f.write(json.dumps(rec, sort_keys=True) + "\n")
+            self.f.flush()
+            os.fsync(self.f.fileno())
+        except OSError as e:  # disk full / IO error: halt; must never be mistaken for a network error
+            self.journal_broken = True
+            self.stop.set()
+            raise Halt(f"journal write failed ({e}); free disk space, then --resume") from e
 
     # ---- one stage -----------------------------------------------------------------------------
     def _body(self, model, messages, tools, tool_choice=None):
@@ -419,17 +450,19 @@ class Runner:
         sent = {k: v for k, v in (body or {}).items() if k not in ("messages", "tools")}  # exact settings sent
         if body and body.get("tools"):
             sent["tools"] = [t["function"]["name"] for t in body["tools"]]
-        common = dict(iid=iid, request_sha256=req_sha, request_params=sent, http_status=status, response=resp, usage=usage,
+        meta = {k: v for k, v in resp.items() if k != "choices"}  # message kept once, below
+        common = dict(iid=iid, request_sha256=req_sha, request_params=sent, http_status=status, response=meta, usage=usage,
                       cost_usd=cost, billing_unresolved=unresolved,
                       served_provider=resp.get("provider"), served_model=resp.get("model"))
         if status != 200 or not resp.get("choices"):
-            return self._result(key, model, "failed", error=f"HTTP {status}", **common)
+            return self._result(key, model, "failed", error=f"HTTP {status}", error_body=resp.get("error"), **common)
         if resp.get("provider") != m["provider_name"] or not str(resp.get("model", "")).startswith(m["slug"]):
             return self._result(key, model, "failed", error="served provider/model differs from pin", **common)
         ch = resp["choices"][0]
         msg = ch.get("message") or {}
         reasoning = msg.get("reasoning") or msg.get("reasoning_content") or msg.get("reasoning_details")
         return self._result(key, model, "ok", text=msg.get("content") or "", tool_calls=msg.get("tool_calls"),
+                            finish_reason=ch.get("finish_reason"),
                             reasoning_returned=bool(reasoning),
                             reasoning_tokens=(usage.get("completion_tokens_details") or {}).get("reasoning_tokens"),
                             message=msg, truncated=ch.get("finish_reason") == "length", **common)
@@ -473,6 +506,10 @@ class Runner:
             self.close()
             raise Halt(f"spend_cap_usd {self.cfg['spend_cap_usd']} < worst case for the full design {need:.2f}; "
                        "raise the cap or shrink the design BEFORE starting")
+        free = shutil.disk_usage(self.dir).free
+        if free < 1e9:
+            self.close()
+            raise Halt(f"only {free / 1e9:.2f} GB free on the run disk; free at least 1 GB before starting")
         tasks = list(tasks)
         random.Random(self.cfg["seed"]).shuffle(tasks)
         state = {"finished": 0, "aborted": 0}
@@ -490,10 +527,14 @@ class Runner:
             except Transient:
                 with self.lock:
                     state["aborted"] += 1
+                    retry_later.append(task)
                     self.aborts += 1
                     if self.aborts >= self.cfg["halt_transient_aborts"]:
                         self._halt("too many tasks aborted on transient errors")
-            except (Halt, Deferred):
+            except Deferred:
+                with self.lock:
+                    retry_later.append(task)
+            except Halt:
                 pass
 
         t0, total = time.time(), len(planned)
@@ -502,6 +543,8 @@ class Runner:
 
         def ticker():  # one progress line every `progress_every` seconds, to stderr
             while not ticker_stop.wait(self.progress_every):
+                if shutil.disk_usage(self.dir).free < 3e8:
+                    self._halt("less than 300 MB disk free")
                 d = sum(p[0] in self.done for p in planned)
                 rate = (d - start_done) / max(1e-9, time.time() - t0)
                 eta = (total - d) / rate if rate > 0 else float("inf")
@@ -515,9 +558,18 @@ class Runner:
         self._raise_fd_limit(4 * workers + 256)
         ex = ThreadPoolExecutor(max_workers=workers)
         try:
-            futures = [ex.submit(one, t) for t in tasks]
-            for fu in futures:
-                fu.result()
+            batch = tasks
+            for attempt in range(1 + self.repasses):  # re-pass aborted / deferred tasks automatically
+                retry_later = []
+                state["aborted"] = 0  # counts the latest pass only: tasks still not done
+                for fu in [ex.submit(one, t) for t in batch]:
+                    fu.result()
+                if not retry_later or self.stop.is_set():
+                    break
+                batch = retry_later
+                print(f"[{time.strftime('%H:%M:%S')}] re-pass {attempt + 1}: {len(batch)} tasks after transient errors",
+                      file=sys.stderr, flush=True)
+                time.sleep(30 * self.backoff)
         except KeyboardInterrupt:
             self._halt("Ctrl-C")
             ex.shutdown(wait=True, cancel_futures=True)
@@ -544,7 +596,10 @@ class Runner:
                  stop_info=self.stop_info, journal_by_model=by,
                  calls_pending=sum(p[0] not in self.done for p in self.planned))
         with self.lock:
-            self._write({"type": "session", "event": "end", "summary": s, "t": time.time()})
+            try:
+                self._write({"type": "session", "event": "end", "summary": s, "t": time.time()})
+            except Halt:
+                pass  # journal unavailable (disk full): summary.json below still records the state
         with open(os.path.join(self.dir, "summary.json"), "w") as f:
             json.dump(s, f, indent=1, sort_keys=True)
         return s
@@ -553,8 +608,7 @@ class Runner:
 def status(run_dir):
     """Read-only progress report (safe while a run is active): per-model journal counts, calls pending,
     spend, and the session history (start / resume / end). Pause a run with: touch <run_dir>/PAUSE."""
-    with open(os.path.join(run_dir, "journal.jsonl")) as f:
-        lines = [json.loads(x) for x in f if x.strip()]
+    lines = load_journal(os.path.join(run_dir, "journal.jsonl"))
     with open(os.path.join(run_dir, "manifest.json")) as f:
         planned = json.load(f)["planned_keys"]
     done, intents, spent, sessions = {}, {}, 0.0, []

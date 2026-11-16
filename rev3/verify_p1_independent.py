@@ -184,6 +184,8 @@ def audit_journal(run_dir, cfg_models, items):
             a[m]["reasoning_returned"][str(bool(r.get("reasoning_returned")))] += 1
             num[m]["reasoning_tokens_sum"] += r.get("reasoning_tokens") or 0
             num[m]["ok_results"] += 1
+            num[m]["cost_usd_sum_ok_results"] += r.get("cost_usd") or 0.0
+            a[m]["ok_results_by_stage"]["turn1" if stage == "turn1" else f"turn2_{stage}"] += 1
             tcs = r.get("tool_calls") or []
             if stage == "optional":
                 a[m]["optional_stage_has_tool_calls"][str(bool(tcs))] += 1
@@ -212,6 +214,7 @@ def audit_journal(run_dir, cfg_models, items):
         out[m] = {k: dict(v) for k, v in d.items()}
         if num[m]["ok_results"]:
             out[m]["mean_reasoning_tokens_per_ok_result"] = num[m]["reasoning_tokens_sum"] / num[m]["ok_results"]
+            out[m]["cost_usd_sum_ok_results"] = num[m]["cost_usd_sum_ok_results"]
         if m in cfg_models:
             out[m]["pinned"] = {"provider_name": cfg_models[m]["provider_name"], "slug": cfg_models[m]["slug"],
                                 "provider": cfg_models[m]["provider"]}

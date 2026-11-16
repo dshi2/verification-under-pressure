@@ -71,6 +71,42 @@ def interaction(trials, family_of):
     return out
 
 
+def component_blocks(trials, family_of):
+    """estimates[pressure][model]["components"] (requested by WS-C/D): delta_acc[u][route] and D[u], each
+    {estimate, items_used, inference: summarize(...)} like an estimand. Descriptive components of E3/E4."""
+    acc = defaultdict(list)
+    for t in trials:
+        if t.get("final_correct") is not None:
+            acc[(t["model"], t["item_id"], t["snapshot"], t["assertion"], t["pressure"], t["route"])].append(
+                t["final_correct"])
+    cm = {k: sum(v) / len(v) for k, v in acc.items()}
+    items = sorted({t["item_id"] for t in trials})
+    out = {}
+    for m in sorted({t["model"] for t in trials}):
+        for p in ("insistence", "authority"):
+            blk = {"delta_acc": {}, "D": {}, "note": "descriptive components: E3 = mean_u D[u], E4 = D[right] - "
+                   "D[wrong]; delta_acc = acc(pressure) - acc(neutral), snapshot-averaged, item-weighted; "
+                   "not separate hypotheses (no Holm)"}
+            for u in ("right", "wrong"):
+                vals = {r: {} for r in ("none", "optional", "supplied")}
+                dvals = {}
+                for it in items:
+                    try:
+                        d = {r: sum(cm[(m, it, s, u, p, r)] - cm[(m, it, s, u, "neutral", r)]
+                                    for s in ("current", "stale")) / 2 for r in vals}
+                    except KeyError:
+                        continue
+                    for r in vals:
+                        vals[r][it] = d[r]
+                    dvals[it] = d["supplied"] - d["optional"]
+                pack = lambda v: {"estimate": (sum(v.values()) / len(v)) if v else None, "items_used": len(v),
+                                  "inference": summarize(v, family_of) if len(v) > 1 else {}}
+                blk["delta_acc"][u] = {r: pack(v) for r, v in vals.items()}
+                blk["D"][u] = pack(dvals)
+            out.setdefault(p, {})[m] = blk
+    return out
+
+
 def export_csvs(res, trials, manifest, out_dir):
     """CSV tables next to analysis.json: contrasts (every interval type), validity, funnel, batches."""
     from p1v3.estimands import PRIMARY as PRIM
@@ -158,6 +194,14 @@ def export_csvs(res, trials, manifest, out_dir):
         rows.append(r)
     write_csv(os.path.join(out_dir, "funnel.csv"), rows)
     write_csv(os.path.join(out_dir, "interaction.csv"), res["interaction_components"])
+    rows = []
+    for m, d in res["unknown_answers"].items():
+        for arm, v in d["final_by_arm"].items():
+            rows.append({"model": m, "turn": "final (turn 2)", "arm_or_snapshot": arm, **v})
+        for s, v in d["turn1_by_snapshot"].items():
+            rows.append({"model": m, "turn": "first (turn 1; item x repeat units)", "arm_or_snapshot": s,
+                         "unknown": v["unknown"], "valid": v["units"], "share": v["share"]})
+    write_csv(os.path.join(out_dir, "unknown_answers.csv"), rows)
 
     if "batches" in res:
         rows = []
@@ -208,19 +252,59 @@ def validity(trials):
     return out
 
 
-def cells(trials):
-    """Per model x cell: mean of final_correct, conceded, lookup_attempted over observed trials (descriptive; plots)."""
+def cells(trials, manifest=None):
+    """Per model x cell: [mean, n] of final_correct, conceded, lookup_attempted, lookup_relevant over observed
+    trials, plus a `counts` block (descriptive; plots). counts: scheduled (frozen manifest), status_ok,
+    valid_final, final_unknown (valid answers equal to "unknown", scored incorrect), final_correct; optional
+    route also attempted / completed / relevant (denominator status_ok)."""
+    sched = Counter((r["model"], "/".join((r["snapshot"], r["assertion"], r["pressure"], r["route"])))
+                    for r in (manifest or []))
     out = {}
     for m in sorted({t["model"] for t in trials}):
         acc = defaultdict(lambda: defaultdict(list))
+        cnt = defaultdict(Counter)
         for t in trials:
             if t["model"] != m:
                 continue
             c = "/".join((t["snapshot"], t["assertion"], t["pressure"], t["route"]))
-            for k in ("final_correct", "conceded", "lookup_attempted"):
+            for k in ("final_correct", "conceded", "lookup_attempted", "lookup_relevant"):
                 if t.get(k) is not None:
                     acc[c][k].append(t[k])
-        out[m] = {"/".join(c): {k: (sum(v) / len(v), len(v)) for k, v in acc["/".join(c)].items()} for c in CELLS}
+            n = cnt[c]
+            n["status_ok"] += t["status"] == "ok"
+            n["valid_final"] += t.get("validity") == "valid"
+            n["final_unknown"] += t.get("validity") == "valid" and t.get("final_answer") == "unknown"
+            n["final_correct"] += t.get("final_correct") == 1
+            if t["route"] == "optional":
+                n["attempted"] += t.get("lookup_attempted") == 1
+                n["completed"] += t.get("lookup_completed") == 1
+                n["relevant"] += t.get("lookup_relevant") == 1
+        out[m] = {}
+        for c in CELLS:
+            c = "/".join(c)
+            out[m][c] = {k: (sum(v) / len(v), len(v)) for k, v in acc[c].items()}
+            out[m][c]["counts"] = dict(cnt[c], scheduled=sched.get((m, c)))
+    return out
+
+
+def unknown_shares(trials):
+    """Share of valid final answers equal to "unknown" (scored incorrect) per model x pressure x route, and
+    turn-1 "unknown" per model x snapshot (one row per item x repeat unit)."""
+    fin, t1 = defaultdict(Counter), defaultdict(dict)
+    for t in trials:
+        if t.get("validity") == "valid":
+            c = fin[(t["model"], t["pressure"], t["route"])]
+            c["valid"] += 1
+            c["unknown"] += t.get("final_answer") == "unknown"
+        if t.get("first_validity") == "valid":
+            t1[(t["model"], t["snapshot"])][(t["item_id"], t["repeat"])] = t["first_answer"] == "unknown"
+    out = {}
+    for (m, p, r), c in sorted(fin.items()):
+        out.setdefault(m, {"final_by_arm": {}, "turn1_by_snapshot": {}})["final_by_arm"][f"{p}/{r}"] = {
+            "unknown": c["unknown"], "valid": c["valid"], "share": c["unknown"] / c["valid"]}
+    for (m, s), d in sorted(t1.items()):
+        out.setdefault(m, {"final_by_arm": {}, "turn1_by_snapshot": {}})["turn1_by_snapshot"][s] = {
+            "unknown": sum(d.values()), "units": len(d), "share": sum(d.values()) / len(d)}
     return out
 
 
@@ -333,8 +417,8 @@ def main():
     ids = [t["item_id"] for t in trials]
     family_of = {t["item_id"]: t["family"] for t in trials}
     res = {"label": LABEL, "roles": ROLES, "run_dirs": a.run_dir, "n_items": len(set(ids)),
-           "n_families": len(set(family_of.values())), "validity": validity(trials), "cells": cells(trials),
-           "estimates": {}}
+           "n_families": len(set(family_of.values())), "validity": validity(trials),
+           "cells": cells(trials, manifest), "unknown_answers": unknown_shares(trials), "estimates": {}}
     for p in ("insistence", "authority"):
         try:
             res["estimates"][p] = estimate_by_model(trials, pressure=p, manifest=manifest)
@@ -352,6 +436,10 @@ def main():
                 for n in PRIMARY:
                     est[n]["inference"][f"{k}_holm"] = adj.get(n)
     res["interaction_components"] = interaction(trials, family_of)
+    comps = component_blocks(trials, family_of)
+    for p, est in res["estimates"].items():
+        for m, e in (est.items() if "error" not in est else []):
+            e["components"] = comps[p][m]
     if len(a.run_dir) > 1:
         res["batches"] = batches(a.run_dir, trials, res["estimates"])
     with open(os.path.join(out_dir, "analysis.json"), "w") as f:

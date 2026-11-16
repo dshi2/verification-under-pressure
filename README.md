@@ -1,39 +1,26 @@
 # Verification Under Pressure (P1)
 
-**Question.** Holding the factual challenge and decisive evidence fixed, does social pressure change whether an agent *obtains* evidence (optional lookup) and whether it *uses* it (identical evidence supplied), and does that depend on whether the user is right? The contribution is the three-way interaction, estimated directly. Voluntary vs. supplied evidence alone is known (Christian & Mazor, arXiv 2601.14553).
+Does social pressure change whether an agent fetches objective evidence, uses supplied evidence, or both? The proposed contribution is the pressure × evidence-delivery × user-correctness comparison.
 
-## Status (2026-11-16)
-| Item | Status |
-|---|---|
-| Specification | Revision 3 pending. Primary contrast: insistence vs. neutral |
-| Offline harness | Baseline exists (archive); fixes pending |
-| Diagnostic pilot | Not yet |
-| Confirmatory study | **Not approved** |
-| Authorized paid runs | **None** |
+## Current development
 
-## Contents
-- `archive/codex-baseline-2026-11-16/`: preserved Codex harness and reviews with `SHA256SUMS`. Historical diagnostic baseline; do not edit in place.
-- `docs/`: governing documents.
-- `common/` (to be created): shared infrastructure owned here (budget ledger, model adapter, analysis utilities).
+Work is on `p1-revision-3`. The [revision-3 specification](rev3/REVISION_3_SPEC.md) describes the current design; older protocol amendments are historical context. Offline estimators and tests exist. A complete live execution harness, precision validation and human validation of pressure wording remain separate requirements. Confirmatory experiments and paid runs are not authorized.
 
-## Known blockers (baseline)
-- The neutral arm alone has a deliberation cue ("Please reconsider…").
-- Agreement trials are pooled with disagreement trials.
-- An anti-sycophancy hint in the system prompt.
-- Too many contrasts labeled primary.
-- A failed turn 1 breaks the matching.
-- Length matching is done by padding with spaces.
-- **Disagreement is defined on the snapshot, not the model's answer.** The rev-3 notes set `snapshot_correct = not user_correct`, but the model's actual turn-1 answer can differ from the snapshot, so the "disagreement" stratum can contain agreement trials. Fix: inject turn 1 as a fixed, cached assistant message (and record that it was injected), or measure the actual first answer and define disagreement on it before the pressure arm is assigned. Rewording the interpretation is not enough. (ChatGPT review, 16 Nov.)
-- **Interpretation of the interaction.** In binary disagreement trials, user correctness and initial-answer correctness are perfectly anti-correlated. The pressure × evidence × user-correctness interaction therefore compares *correction* situations with *yielding* situations. It does not isolate sensitivity to truth independent of starting correctness.
-- **Precision for the interaction.** It needs its own simulation-based precision analysis, with item clustering and realistic missingness, before any confirmatory sizing.
+- [Specification and estimands](rev3/REVISION_3_SPEC.md)
+- [Estimator implementation](rev3/p1v3/estimands.py) and [tests](rev3/tests/)
+- [Commit-specific reviews](reviews/)
 
-## Governing documents (`docs/`)
-- `PROTOCOLS_v1.md`: revision 2 plus revision 3 / 3b amendment notes. A consolidated revision 3 specification is in progress; until then, revision 2 + the amendment notes apply.
-- `NOVELTY_GATE_FINAL.md`: §2.2 novelty and contribution gate (round 2).
-- `MASTER_CHECKLIST_ADDENDUM.md`: amendments to the 10-gate Research Quality Protocol (Master Checklist v3). **The v3 checklist text itself still needs adding.**
-- `EXECUTION_CHECKLIST.md`: superseded; kept for history.
-- `NOVELTY_CHECK*.md`, `HANDOFF_TO_CODEX.md`: history.
-- `SHA256SUMS`: hashes of these documents as first committed.
+Run the offline tests from `rev3/`:
+
+```sh
+python3 -m unittest discover -s tests -t . -q
+```
+
+## Historical material
+
+`archive/codex-baseline-2026-11-16/` preserves the original combined P1/P2 diagnostic harness and its hashes. Do not edit it in place or use it as the current runner. `docs/` contains earlier protocols, checklists and handoffs; consult their revision status before applying them.
+
+Shared execution infrastructure is planned, not an existing framework. If introduced, it must have one maintained implementation and recorded dependency versions rather than independently edited copies.
 
 ## Rules
 - **Handoffs:** every handoff and review names repository · branch · commit · changes · checks performed · open issues. A review applies only to the commit it inspected.

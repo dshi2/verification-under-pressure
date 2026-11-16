@@ -89,7 +89,10 @@ def load_journal(path, repair=False):
             if repair:
                 with open(path, "r+b") as f:
                     f.truncate(min(good_end, len(raw)))
-            break
+            return recs
+    if repair and raw and not raw.endswith(b"\n"):  # complete last record without newline: close the line
+        with open(path, "ab") as f:
+            f.write(b"\n")
     return recs
 
 
@@ -214,6 +217,7 @@ class Runner:
         self.stop = threading.Event()
         self.done, self.spent, self.reserved, self.aborts, self.recent = {}, 0.0, 0.0, 0, []
         self.inflight, self.unsettled_prior, self.cooldown_until, self.account_throttles = {}, 0.0, 0.0, 0
+        self.attempts = self.ambiguous = 0
         self.paused, self.planned, self.unsettled, self.stop_info, self.last429 = False, [], 0.0, None, {}
         self.limiters = {n: Limiter(m["concurrency_start"], m["concurrency_max"]) for n, m in cfg["models"].items()}
         os.makedirs(run_dir, exist_ok=True)
@@ -389,6 +393,7 @@ class Runner:
                     self._halt("spend cap reached (runaway guard)")
                     raise Halt("spend cap reached")
                 self.reserved += reserve
+                self.attempts += 1
                 self._write({"type": "intent", "iid": iid, "key": key, "reserve_usd": reserve, "t": time.time()})
             lim.acquire()
             self._wait_cooldown()  # shared account cooldown applies to every model
@@ -423,6 +428,7 @@ class Runner:
                     self._write({"type": "attempt_error", "iid": iid, "key": key, "http_status": status,
                                  "error": str(e)[:300], "billed_unknown": billed_unknown, "t": time.time()})
                     if billed_unknown:
+                        self.ambiguous += 1
                         self.unsettled += reserve  # stays counted as spent now, exactly as on resume
                         self.spent += reserve
                     else:
@@ -590,6 +596,9 @@ class Runner:
                  paused=getattr(self, "paused", False), complete=state["finished"] == n,
                  spent_usd=round(self.spent, 6),
                  account_throttles=self.account_throttles,
+                 network_attempts_this_session=self.attempts,
+                 ambiguous_attempts_this_session=self.ambiguous,  # timeouts etc.: may have run remotely
+                 unique_stage_results=len(self.done),
                  results_without_billing=sum(bool(r.get("billing_unresolved")) for r in self.done.values()),
                  confirmed_usd=round(self.spent - self.unsettled - self.unsettled_prior, 6),
                  unsettled_billing_usd=round(self.unsettled + self.unsettled_prior, 6),
@@ -627,6 +636,9 @@ def status(run_dir):
         by.setdefault(r["model"], {}).setdefault(r["status"], 0)
         by[r["model"]][r["status"]] += 1
     pending = [k for k in planned if k not in done]
-    return {"calls_planned": len(planned), "calls_done": len(planned) - len(pending), "calls_pending": len(pending),
+    n_intents = sum(r["type"] == "intent" for r in lines[1:])
+    n_ambig = sum(r["type"] == "attempt_error" and r.get("billed_unknown") for r in lines[1:])
+    return {"network_attempts": n_intents, "ambiguous_attempts": n_ambig, "unique_stage_results": len(done),
+            "calls_planned": len(planned), "calls_done": len(planned) - len(pending), "calls_pending": len(pending),
             "by_model": by, "spent_usd": round(spent + sum(intents.values()), 6), "in_flight_or_unsettled": len(intents),
             "paused": os.path.exists(os.path.join(run_dir, "PAUSE")), "sessions": sessions}

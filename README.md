@@ -41,3 +41,5 @@
 - **Secrets:** never committed (see `.gitignore`). API keys stay in local environment variables.
 - **Held-out confirmatory items** are kept outside development repos. Validators may inspect them under a fixed rubric; they and their results are never used for tuning, model choice, scoring changes or hypothesis selection.
 - **Spending:** all projects share one ceiling and one ledger outside the repos (`~/Documents/research_active/ai-epistemics/budget/`, not yet created). Never one ledger per repo.
+
+**Governing checklist:** Master Checklist v3, canonical copy at [dshi2/research-candidates@396e29d/docs/MASTER_CHECKLIST_v3.md](https://github.com/dshi2/research-candidates/blob/396e29d/docs/MASTER_CHECKLIST_v3.md) (SHA-256 `8e4ba457b2e04775…`), with `docs/MASTER_CHECKLIST_ADDENDUM.md` taking precedence. It is pinned rather than copied.

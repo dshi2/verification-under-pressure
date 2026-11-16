@@ -1,6 +1,6 @@
 # Addendum to Research Quality Protocol — Master Checklist v3
 
-Adopt Master Checklist v3 as the governing standard. It supersedes EXECUTION_CHECKLIST.md, except for the four additions below, which v3 lacks or states only loosely.
+Adopt Master Checklist v3 (`MASTER_CHECKLIST_v3.md`; canonical copy in dshi2/research-candidates) as the governing standard. It supersedes EXECUTION_CHECKLIST.md, except for the four additions below, which v3 lacks or states only loosely.
 
 ## Additions (merge into v3)
 1. **Gate 3 + Gate 6: the harness enforces the matrix.** DESIGN_MATRIX.csv is the harness's *input*, not documentation. Any run that isn't a cell of the frozen matrix is refused in code.
@@ -32,7 +32,7 @@ Adopt Master Checklist v3 as the governing standard. It supersedes EXECUTION_CHE
 - **Manifests record the actual configuration and deviations,** not only the intended settings.
 
 ## Corrections to v3's application section
-- **P1 cell count.** The evidence factor has three levels (no tool / optional / supplied), not two. The cells are 3 pressure × 3 evidence × 2 user-correctness = **18** per item × model × repeat, using disagreement trials only. The primary contrast is insistence vs. neutral (authority secondary), per revision-3 notes.
+- **P1 cell count.** The evidence factor has three levels (no tool / optional / supplied), and snapshot version is crossed as well: 2 snapshot × 2 user assertion × 3 pressure × 3 evidence = **36** cells per item × model × repeat (full randomized crossing, P1 rev 3 from caf0977). Realized disagreements are a secondary analysis. The earlier 18-cell disagreement-only design is withdrawn. Primary pressure contrast: insistence vs. neutral (authority secondary).
 - **External timestamp (Gate 2).** OSF or AsPredicted registration needs an account created by the user. Agents prepare the text; the user registers it.
 
 ## The four kinds of "round" (keep in DESIGN_MATRIX.csv as separate columns)
@@ -50,21 +50,20 @@ Adopt Master Checklist v3 as the governing standard. It supersedes EXECUTION_CHE
 | Engineering (code matches the frozen protocol, invariants pass) | Claude (lead) | Codex (Agent 5 role) |
 | Publication (evidence supports a meaningful claim) | Claude + Codex | **User (PI)** |
 
-## Mandatory artifacts: current status
-| Artifact | Status |
-|---|---|
-| NOVELTY_GATE.md | NOVELTY_GATE_FINAL.md (P1, P2, P3) — done for round 2 |
-| PROTOCOL.md | PROTOCOLS_v1.md rev 2 + rev 3 notes — not frozen |
-| DESIGN_MATRIX.csv | **Missing**, the next item |
-| DATASET_CARD.md | Missing |
-| SCORING_SPEC.md | Missing (P2 outcome-level fields defined in rev 3 notes) |
-| PREREGISTRATION.md | Codex draft, not aligned with rev 3 |
-| IMPLEMENTATION_AUDIT.md | Codex reconciliation_v2.md (19 items); rev-3 items not yet covered |
-| RUN_MANIFEST.json | Implemented in the v2 harness |
-| RAW_LOGS/, ANALYSIS/ | Mock only; no real data |
-| INDEPENDENT_AUDIT.md | Codex audit_report_v2.md covers v2; none for rev 3 |
-| FINAL_CLAIMS.md | Not started (after results) |
-| BACKLOG.md | Missing (addition 3) |
+## Mandatory artifacts: current status (16 Nov 2026, PR heads)
+| Artifact | P1 (verification-under-pressure) | P2 (scope-of-trust) | P3 (research-candidates) |
+|---|---|---|---|
+| NOVELTY_GATE.md | NOVELTY_GATE_FINAL.md + rev-3 spec §1 (E4 carries novelty) | NOVELTY_GATE_FINAL.md + rev-3 spec §1 | P3_NOVELTY_DOSSIER.md; C1 open |
+| PROTOCOL.md | `rev3/REVISION_3_SPEC.md` (draft) | `rev3/REVISION_3_SPEC.md` (draft) | two competing direction drafts (PR #1, PR #2) |
+| DESIGN_MATRIX.csv | missing (no items yet) | `rev3/DESIGN_MATRIX_dev.csv` (dev; model/repeat TBD) | not started |
+| CONTRAST_LEDGER.csv | `rev3/CONTRAST_LEDGER.csv` | `rev3/CONTRAST_LEDGER.csv` | not started |
+| DATASET_CARD.md | missing | partial: `COVERAGE_dev.md` | not started |
+| SCORING_SPEC.md | spec §7–8 | `rev3/SCORING_SPEC.md` | not started |
+| Design-adherence report | not yet (no matrix) | `rev3/p2v3/matrix_audit.py` (planned matrix + reconciliation) | not started |
+| Analysis validated on known effects | `rev3/p1v3/estimands.py` + tests (points, bounds; no intervals) | not yet (coverage simulation specified) | not started |
+| PREREGISTRATION.md | not yet (needs frozen spec; OSF by PI) | not yet | not yet |
+| IMPLEMENTATION_AUDIT.md, RUN_MANIFEST.json, RAW_LOGS/, ANALYSIS/, INDEPENDENT_AUDIT.md, FINAL_CLAIMS.md | after harness / runs | after harness / runs | after harness / runs |
+| BACKLOG.md | in spec §12 | `rev3/BACKLOG.md` | — |
 
 ## Second auditor amendments (accepted)
 - **Staged freezes:** diagnostic specification → implementation + pilot → revised confirmatory freeze. This avoids circularity: the pilot needs software, and software needs a design.

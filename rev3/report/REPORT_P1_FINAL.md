@@ -5,13 +5,13 @@ Independent
 
 **With** Apart Research
 
-_Research conducted at the AI × Epistemics Research Sprint, November 2026._
+_Research conducted at the AI × Epistemics Research Sprint, November 2026. Code and data: https://github.com/dshi2/verification-under-pressure_
 
 ---
 
 ## Abstract
 
-Sycophancy evaluations usually ask whether a model abandons a correct answer under pushback, yet assistants increasingly work in workflows that can consult authoritative records. We ask where user pressure acts in such a workflow, on the choice to look a record up or on using a record already in context, and whether this depends on whether the user is right. In a randomized two-turn experiment on 60 builder-written registry items, we crossed snapshot currency, assigned user correctness, pressure (neutral, insistence, irrelevant authority) and evidence route (none, optional lookup tool, record supplied automatically) for four open-weight models, 43,200 trials in all. Insistence lowered optional lookup attempts in every model, by 1.3 (DeepSeek-V3.2, near a ceiling) to 49.7 percentage points (Qwen3-235B). With the record supplied, it changed accuracy by at most 0.4 points in three models and by 2.4 in DeepSeek-V3.2. For Qwen3-235B and gpt-oss-120b, supplying the record instead of offering it reduced the insistence penalty on accuracy (+25.6 and +4.5 points), mainly when the user was wrong. This is same-sign amplification, not reversal, and these estimates exclude zero under family-clustered intervals. Items are builder-written and the pressure wording is unrated, so generalization to independently constructed tasks remains to be tested. Code and data: https://github.com/dshi2/verification-under-pressure
+Sycophancy evaluations usually ask whether a model abandons a correct answer under pushback, yet assistants increasingly work in workflows that can consult authoritative records. We ask where user pressure acts in such a workflow, on the choice to look a record up or on using a record already in context, and whether this depends on whether the user is right. In a randomized two-turn experiment on 60 builder-written registry items, we crossed snapshot currency, assigned user correctness, pressure (neutral, insistence, irrelevant authority) and evidence route (none, optional lookup tool, record supplied automatically) for four open-weight models, 43,200 trials in all. Insistence lowered optional lookup attempts in every model, by 1.3 (DeepSeek-V3.2, near a ceiling) to 49.7 percentage points (Qwen3-235B). With the record supplied, it changed accuracy by at most 0.4 points in three models and by 2.4 in DeepSeek-V3.2. For Qwen3-235B and gpt-oss-120b, supplying the record instead of offering it reduced the insistence penalty on accuracy (+25.6 and +4.5 points), mainly when the user was wrong. This is same-sign amplification, not reversal, and these estimates exclude zero under family-clustered intervals. Items are builder-written and the pressure wording is unrated, so generalization to independently constructed tasks remains to be tested.
 
 ---
 
@@ -346,7 +346,7 @@ We evaluated four open-weight, text-only models from independent developers:
 All four were served through OpenRouter with a pinned provider and quantization per model (Appendix D).
 
 We used the pinned providers' default sampling configurations, with reasoning enabled for gpt-oss-120b (its default) and for DeepSeek-V3.2 (an explicit override). All request parameters and the available inference metadata were recorded.
-- No sampling parameter is sent. The only fields set are `max_tokens` = 8192 and, for DeepSeek-V3.2, `reasoning.enabled = true`.
+- Sampling parameters were left at each provider's defaults; the only request fields set were `max_tokens` = 8192 and, for DeepSeek-V3.2, `reasoning.enabled = true`.
 - The API does not return the sampling values a provider applied.
 - Settings are identical across conditions within a model.
 - There are five repeated generations per item × cell, nested within the item, so response-level independence is not assumed. The repeat index is not a provider seed, and hosted endpoints are not deterministic.

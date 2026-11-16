@@ -23,9 +23,9 @@ This document consolidates revision 2 (`docs/PROTOCOLS_v1.md`, P1 sections) with
 - full mediation by voluntary checking (it is a workflow effect)
 - that supplied-evidence results describe uncanonicalized tool use (§4.5)
 
-**If null:** "insistence does not change obtaining or using decisive evidence by more than [SESOI] in this workflow". This is informative: pressure effects on answers would then not run through evidence acquisition or use.
+**If null:** "insistence does not change obtaining or using decisive evidence by more than [SESOI] in this workflow". This bounds pressure effects on the prespecified observed acquisition and supplied-evidence outcomes in the tested design. It does not rule out effects on other evidence processing (relevance of lookups, retrieval failures, attention to retrieved facts, heterogeneity across models or items, offsetting effects), and it is not a mediation claim.
 
-**Interpreting each primary contrast (fixed before data).** Report "no meaningful effect" only if the 95% interval lies entirely inside ±SESOI (§9 step 1). If the interval crosses SESOI, the result is "inconclusive", never "no effect". The precision target is set so that both outcomes are informative. Every prespecified outcome is reported, including those against the hypotheses. Items and cases are chosen to tell explanations apart, never to raise error rates.
+**Interpreting each primary contrast (fixed before data).** Report "no meaningful effect" only if the 95% interval lies entirely inside ±SESOI (§9 step 1). If the interval crosses SESOI, the result is "inconclusive", never "no effect". The precision target is set so that both outcomes are informative. A claim of **joint** absence across several primary contrasts or models needs simultaneous intervals under the multiplicity rule, never a collection of unadjusted per-contrast intervals. The §9 simulation validates whichever family-level statement is made. Every prespecified outcome is reported, including those against the hypotheses. Items and cases are chosen to tell explanations apart, never to raise error rates.
 
 ## 2. Changes from revision 2 and the v2 harness (the diff)
 | # | Revision 2 / v2 harness | Revision 3 | Why |
@@ -251,3 +251,4 @@ Required tests:
 | ChatGPT follow-up (caf0977) | Neutral wording must fit agreement trials | Levels renamed to "neutral assertion"; no paraphrase presupposes disagreement; rated in both trial types (§5) |
 | ChatGPT check (7834fd3) | Retrieval decomposition wrong; 0/1 fills are not bounds for mixed-sign contrasts | Exact split Δa·q_I + a_N·Δq (§7); sign-aware bounds, implemented with brute-force test (§7, §10) |
 | PI standard (16 Nov) | Informative nulls; report all prespecified outcomes | Equivalence-based null rule and null claim (§1) |
+| ChatGPT (fb83a93) | Null sentence implied no evidence pathway and mediation; joint-equivalence multiplicity | Bounded to the observed outcomes, with no mediation claim; simultaneous intervals for joint absence (§1) |

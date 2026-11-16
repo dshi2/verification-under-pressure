@@ -64,11 +64,12 @@ A new session should read this file first, then each project's `REVISION_3_SPEC.
 - **Settings.**
   - Models (text-only, open-weight): gpt-oss-120b, DeepSeek-V3.2 (reasoning on), Qwen3-235B-A22B-2507, Kimi-K2-0905.
   - Provider-default sampling; max_tokens 8192; 5 repeats.
-- **Example launch** (P2 batch 2, in a Terminal tab):
-  ```
-  cd <P2 rev3> && ./launch_run.sh p2 p2_ba_v1 python3 run_p2.py --config configs/<p2 config>.json --stimuli <stimuli_ba file> --run-dir runs/p2_ba_v1
-  ```
-  Check the exact flags in `run_p2.py --help` and in the batch-1 commands at the top of `logs/p2_base.log` / `logs/p2_ext.log`.
+- **Exact commands used** (each in its own Terminal tab, from rev3; rerunning the same command resumes safely):
+  - P1 base: `./launch_run.sh p1 p1_base_v2 python3 run_p1.py --config configs/p1_dev_eval_v2.json --repeats 5 --run-dir runs/p1_dev_eval_v2`
+  - P1 ext: `./launch_run.sh p1 p1_ext_v2 python3 run_p1.py --config configs/p1_dev_eval_v2.json --item-set ext --repeats 5 --run-dir runs/p1_ext_v2`
+  - P2 base: `./launch_run.sh p2 p2_base python3 run_p2.py --config configs/p2_dev_eval_v1.json --stimuli stimuli_dev.jsonl --repeats 5 --run-dir runs/p2_dev_eval_v1`
+  - P2 ext: `./launch_run.sh p2 p2_ext python3 run_p2.py --config configs/p2_dev_eval_v1.json --stimuli stimuli_ext.jsonl --repeats 5 --run-dir runs/p2_ext_v1`
+  - P2 batch 2 (once cases are committed; use the stimuli filenames the case sessions produce): same as P2 ext with `--stimuli stimuli_ba.jsonl --run-dir runs/p2_ba_v1`, and likewise for bb and bc.
 
 ## 3. P1 — status and what is next
 

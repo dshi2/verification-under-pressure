@@ -12,7 +12,7 @@ Lesson from the shutdown-interference project: sub-experiments ran with uneven r
 5. **Change one thing per contrast.** For each primary contrast, list exactly what differs between its two cells. If anything besides the factor differs (wording, length, cues, settings), fix it before running.
 
 ## B. Budget and size come from the matrix, not the other way round
-6. **Cost the whole matrix before starting.** If it doesn't fit the budget, *shrink the design* (fewer factors, levels or models). Never run a fraction of the cells.
+6. **Cost the scientifically justified, fully scheduled batch before starting, including token-use uncertainty, provider prices, tool continuations and authorized retries.** If the PI-approved budget cannot cover the full batch with a documented contingency, **NO START**. Seek a larger authorized budget or prospectively redesign and revalidate the question, inference, sample size and full matrix before obtaining outcomes. **Never silently shrink independent cases, models, factors, cells or repeats to satisfy a spending cap.** The hard cap is an overrun brake, not a sample-size or stopping rule. An unexpectedly interrupted batch is preserved and labeled incomplete, with no claim of a completed confirmatory study.
 7. **Item count from a precision target,** set using the pilot's variance. The unit is the item; repeats are nested inside it.
 
 ## C. Pilot ≠ experiment

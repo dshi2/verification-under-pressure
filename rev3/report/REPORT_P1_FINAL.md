@@ -309,7 +309,7 @@ Effects differ sharply across models, from Qwen's −49.7 pp E1 to DeepSeek's �
 
 ### 4.3 Where insistence acts in the optional workflow (E1, E1b, E2)
 
-_[Figure 2 pending: optional-route funnel (attempted → relevant → correct) by model, pressure and assertion, with counts.]_
+_[Figure 2 pending: optional-route lookup attempted, relevant lookup and final correct, shown as three rates per model, pressure and assertion (not a nested funnel), with counts.]_
 
 - **Choosing to verify (E1).** Insistence lowered lookup attempts in all four models. Qwen fell by 49.7 pp from a neutral rate of 79.8%, gpt-oss by 10.0 pp (from 99.0%), Kimi by 5.8 pp (from 16.8%) and DeepSeek by 1.3 pp (from 100%). DeepSeek's small value partly reflects a ceiling, and Kimi's rests on a low base rate.
 - **Obtaining the relevant record (E1b).** When the models looked, they retrieved the right record. E1b equals E1 for gpt-oss, Kimi and Qwen, and is −1.2 vs. −1.3 pp for DeepSeek, where 3 attempted trials lacked the correct id.
@@ -348,7 +348,7 @@ _[Figure 3 pending: D(right) and D(wrong) per model, with the Δoptional and Δs
   - Qwen E1 +4.2 pp, under item-t Holm only;
   - Kimi S2 −6.7 pp, under both intervals;
   - gpt-oss S2 −2.8 pp, under the item interval only.
-- **No-evidence route (S2).** DeepSeek +15.1 pp, Qwen +7.9, gpt-oss +2.3 (includes 0) and Kimi −3.7 (item only).
+- **No-evidence route (S2).** DeepSeek +15.1 pp, Qwen +7.9, gpt-oss +2.3 (includes 0) and Kimi −3.75 (item only).
   - `unknown` is scored incorrect, so S2 > 0 mainly reflects insistence reducing abstention. DeepSeek's none-route `unknown` share fell from 85.5% (neutral) to 55.5% (insistence), and Qwen's from 16.8% to 1.3%.
   - S2 is therefore not a measure of sycophantic error.
 - **Between-set check.** 1 of 48 base-vs-extension differences excludes 0: gpt-oss authority S2, +7.4 pp [+2.7, +12.1], unadjusted, where about 2.4 are expected by chance. No insistence difference excludes 0. The sets ran concurrently, and Welch ignores family clustering, so this is a check across item sets, not a replication.

@@ -2,7 +2,11 @@
 
   python3 plot_p1.py --analysis runs/X/analysis.json [--out runs/X/figures]
 
-fig_p1_estimands   forest plot: E1-E4, E1b, S2 per model, insistence and authority vs neutral; point estimate,
+fig_p1_e4          MAIN FIGURE 1: the E4 interaction. Change in accuracy under insistence vs neutral, optional vs
+                   supplied route, split by user assertion right / wrong, per model (item-level means, 95% t CI).
+fig_p1_funnel      MAIN FIGURE 2: optional-route workflow: lookup attempted, relevant record retrieved, final
+                   correct, by pressure, per model; denominators = observed trials per bar (in the caption data).
+fig_p1_estimands   MAIN FIGURE 3: forest plot: E1-E4, E1b, S2 per model, insistence and authority vs neutral; point estimate,
                    provisional 95% item-clustered interval (line), assigned-denominator bounds (grey bracket);
                    hollow marker = degenerate interval (zero spread; not precision).
 fig_p1_accuracy    final accuracy by pressure x route, one row per model, split by assertion (right/wrong),
@@ -20,8 +24,8 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
 
-COLORS = ["#2a78d6", "#eb6834", "#1baf7a", "#eda100"]  # validated categorical slots 1-4 (light surface)
-MARKERS = ["o", "s", "^", "D"]  # second encoding: two slots are below 3:1 contrast
+COLORS = ["#0072B2", "#D55E00", "#009E73", "#CC79A7"]  # Okabe-Ito; same model, same colour in every figure
+MARKERS = ["o", "s", "^", "D"]  # second encoding, so colour is never the only cue
 INK, MUTED, GRID = "#222222", "#6b6b6b", "#e6e6e3"
 PRESSURES, ROUTES, ASSERTIONS, SNAPS = ("neutral", "insistence", "authority"), ("none", "optional", "supplied"), \
     ("right", "wrong"), ("current", "stale")
@@ -41,7 +45,7 @@ def style(ax):
 
 
 def save(fig, out, name):
-    for ext in ("png", "pdf"):
+    for ext in ("png", "pdf", "svg"):
         fig.savefig(os.path.join(out, f"{name}.{ext}"), dpi=200, bbox_inches="tight")
     plt.close(fig)
 
@@ -144,10 +148,88 @@ def validity(an, models, out, sub):
     save(fig, out, "fig_p1_validity")
 
 
+def _item_delta(trials, m, assertion, route, p, key="final_correct"):
+    """Per item: mean over snapshots of (pressure cell mean - neutral cell mean) for one route x assertion."""
+    from collections import defaultdict
+    cell = defaultdict(list)
+    for t in trials:
+        if t["model"] == m and t["assertion"] == assertion and t["route"] == route and t.get(key) is not None:
+            cell[(t["item_id"], t["snapshot"], t["pressure"])].append(t[key])
+    out = []
+    for it in sorted({k[0] for k in cell}):
+        ds = []
+        for snap in SNAPS:
+            a, b = cell.get((it, snap, p)), cell.get((it, snap, "neutral"))
+            if a and b:
+                ds.append(sum(a) / len(a) - sum(b) / len(b))
+        if len(ds) == len(SNAPS):
+            out.append(sum(ds) / len(ds))
+    return out
+
+
+def e4_figure(trials, models, out, sub, p="insistence"):
+    from p1v3.inference import t_interval
+    fig, axes = plt.subplots(1, 2, figsize=(9, 3.8), sharey=True)
+    for ax, a in zip(axes, ASSERTIONS):
+        style(ax)
+        ax.axhline(0, color=MUTED, linewidth=1)
+        for j, m in enumerate(models):
+            for k, rt in enumerate(("optional", "supplied")):
+                d = _item_delta(trials, m, a, rt, p)
+                if not d:
+                    continue
+                x = k + (j - (len(models) - 1) / 2) * 0.12
+                mu = 100 * sum(d) / len(d)
+                ci = t_interval(d)
+                if ci:
+                    ax.plot([x, x], [100 * ci[0], 100 * ci[1]], color=COLORS[j], linewidth=2)
+                ax.plot(x, mu, MARKERS[j], color=COLORS[j], markersize=7, label=m if k == 0 else None,
+                        markerfacecolor=COLORS[j] if (ci and ci[0] != ci[1]) else "white")
+        ax.set_xticks([0, 1])
+        ax.set_xticklabels(["optional lookup", "record supplied"], fontsize=8)
+        ax.set_title(f"user assertion {a}", fontsize=9, color=INK)
+    axes[0].set_ylabel(f"accuracy change, {p} − neutral (pp)", fontsize=8)
+    axes[1].legend(fontsize=7, frameon=False, loc="best")
+    fig.suptitle("P1 Figure 1. Pressure penalty by evidence route and user correctness (E3/E4 components)\n"
+                 + sub, fontsize=9, color=INK)
+    fig.tight_layout()
+    save(fig, out, "fig_p1_e4")
+
+
+def funnel_figure(trials, models, out, sub):
+    keys = [("lookup_attempted", "attempted"), ("lookup_relevant", "relevant record"), ("final_correct", "final correct")]
+    fig, axes = plt.subplots(1, len(PRESSURES), figsize=(10, 3.6), sharey=True)
+    w = 0.8 / len(models)
+    for ax, p in zip(axes, PRESSURES):
+        style(ax)
+        for j, m in enumerate(models):
+            ts = [t for t in trials if t["model"] == m and t["route"] == "optional" and t["pressure"] == p
+                  and t["status"] == "ok"]
+            vals = []
+            for k, _ in keys:
+                v = [t[k] for t in ts if t.get(k) is not None]
+                vals.append(sum(v) / len(v) if v else float("nan"))
+            xs = [i + (j - (len(models) - 1) / 2) * w for i in range(len(keys))]
+            ax.bar(xs, vals, width=w * 0.9, color=COLORS[j], edgecolor="white", linewidth=1,
+                   label=f"{m} (n={len(ts)})")
+        ax.set_xticks(range(len(keys)))
+        ax.set_xticklabels([lbl for _, lbl in keys], fontsize=8)
+        ax.set_ylim(0, 1.05)
+        ax.set_title(p, fontsize=9, color=INK)
+        ax.legend(fontsize=6, frameon=False, loc="upper right")
+    axes[0].set_ylabel("share of ok optional-route trials", fontsize=8)
+    fig.suptitle("P1 Figure 2. Optional-route workflow: attempted lookup → relevant record → final correct\n" + sub,
+                 fontsize=9, color=INK)
+    fig.tight_layout()
+    save(fig, out, "fig_p1_funnel")
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--analysis", required=True)
     ap.add_argument("--out")
+    ap.add_argument("--trials", nargs="*", default=None,
+                    help="trials.jsonl file(s) for the item-level figures (default: from analysis run_dirs)")
     a = ap.parse_args()
     with open(a.analysis) as f:
         an = json.load(f)
@@ -155,6 +237,17 @@ def main():
     os.makedirs(out, exist_ok=True)
     models = sorted(an["validity"])
     sub = f"{an.get('n_items', '?')} items, {an.get('n_families', '?')} families. DEVELOPMENT cases; intervals provisional."
+    synthetic = any(k in d for d in an.get("run_dirs", []) for k in ("synth", "dry", "demo", "scratchpad", "cert"))
+    if synthetic:
+        sub = "SYNTHETIC DEMO — NOT RESULTS. " + sub
+    files = a.trials or [os.path.join(d, "trials.jsonl") for d in an.get("run_dirs", [])]
+    trials = []
+    for fp in files:
+        with open(fp) as f:
+            trials += [json.loads(x) for x in f if x.strip()]
+    if trials:
+        e4_figure(trials, models, out, sub)
+        funnel_figure(trials, models, out, sub)
     forest(an, models, out, sub)
     lines_by_pressure(an, models, out, sub, "fig_p1_accuracy", "final_correct", ROUTES,
                       "P1 final accuracy by pressure and evidence route (averaged over snapshots)", "accuracy", True)

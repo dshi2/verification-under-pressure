@@ -188,7 +188,7 @@ def main():
         for m, est in res["estimates"][p].items():
             for name in ESTIMANDS:
                 est[name]["inference"] = summarize(est[name].pop("item_values"), family_of, seed=ESTIMANDS.index(name))
-            adj = holm({n: est[n]["inference"].get("p_signflip") for n in PRIMARY})
+            adj = holm({n: est[n]["inference"].get("p_t") for n in PRIMARY})
             for n in PRIMARY:
                 est[n]["inference"]["p_holm_primary"] = adj.get(n)
     if len(a.run_dir) > 1:
@@ -200,7 +200,7 @@ def main():
         md += [f"## {m}" + (f" — {ROLES[m]}" if m in ROLES else ""), "", f"Status {v['status']}. Turn-1 eligibility {v['turn1_eligible_by_snapshot']}. "
                f"Neutral optional attempt rate {v['neutral_optional_attempt_rate']}. Neutral supplied adoption "
                f"{v['neutral_supplied_adoption']}. Truncated {v['truncated']}.", "",
-               "| contrast | pressure | estimate | 95% CI items (provisional) | 95% CI families | sign-flip p (Holm, primary) | assigned-denominator bounds | items used / dropped |",
+               "| contrast | pressure | estimate | 95% CI items (provisional) | 95% CI families (CR1) | t-test p (Holm, primary) | assigned-denominator bounds | items used / dropped |",
                "|---|---|---|---|---|---|---|---|"]
         for p, est in res["estimates"].items():
             e = est.get(m) if isinstance(est, dict) else None
@@ -214,10 +214,10 @@ def main():
                 ci = lambda c: "–" if not c else f"[{c[0]:+.3f}, {c[1]:+.3f}]"
                 deg = " (degenerate: zero spread, not precision)" if inf.get("degenerate") else ""
                 ph = inf.get("p_holm_primary")
-                pv = "–" if inf.get("p_signflip") is None else f"{inf['p_signflip']:.2g}" + (f" ({ph:.2g})" if ph is not None else "")
+                pv = "–" if inf.get("p_t") is None else f"{inf['p_t']:.2g}" + (f" ({ph:.2g})" if ph is not None else "")
                 b = r.get("bounds") or (None, None)
                 md.append(f"| {name} | {p} | {f3(r.get('estimate'))} | {ci(inf.get('ci95_item_t'))}{deg} | "
-                          f"{ci(inf.get('ci95_family_t'))} | {pv} | [{f3(b[0])}, {f3(b[1])}] | "
+                          f"{ci(inf.get('ci95_family_cr1'))} | {pv} | [{f3(b[0])}, {f3(b[1])}] | "
                           f"{r.get('items_used')} / {r.get('items_dropped_incomplete')} |")
         md.append("")
     if "batches" in res:

@@ -4,13 +4,17 @@ Every estimand is the mean over items of an item-level contrast d_i (repeats ave
 the item is the cluster and a one-sample analysis of {d_i} is the cluster-robust analysis (Miller 2024,
 "Adding Error Bars to Evals"). Reported per model, per estimand:
 - t interval over items (df = n_items - 1), 95%;
-- family-clustered t interval over family means (df = n_families - 1), a sensitivity check because items
-  within a family share a template;
-- two-sided sign-flip randomization p-value for mean d = 0 (exact when n <= 16, else 20,000 seeded flips);
+- family-clustered interval for the SAME item-weighted mean: cluster-robust (CR1) variance with families as
+  clusters, t with n_families - 1 df (items within a family share a template);
+- primary p-value: two-sided one-sample t-test on {d_i} (df n_items - 1), matching the t interval; the
+  sign-flip randomization p-value is reported as a secondary check only, because it assumes item effects are
+  symmetric about 0, which a zero mean does not guarantee (calibration: SIM_P1_COVERAGE.md);
+- equal-family-weight estimate (mean of family means), a different estimand, reported as a sensitivity;
 - leave-one-family-out range of the estimate;
 - `degenerate` when every d_i is equal: the interval then has zero width and is NOT evidence of precision
   (spec §9 forbids reading such an interval); the assigned-denominator bounds still apply.
-Holm adjustment is applied across the primary family E1-E4 within each model x pressure contrast.
+Holm adjustment (on the t-test p-values) is applied across the primary family E1-E4 within each model x
+pressure contrast.
 
 PROVISIONAL: §9's coverage simulation has not yet selected the confirmatory interval method. These numbers
 describe development data and decide no hypothesis.
@@ -77,6 +81,31 @@ def t_interval(xs, level=0.95):
     return [m - h, m + h]
 
 
+def t_test_p(xs):
+    n = len(xs)
+    if n < 2:
+        return None
+    sd = stdev(xs)
+    if sd == 0:
+        return 1.0 if mean(xs) == 0 else 0.0
+    t = mean(xs) / (sd / math.sqrt(n))
+    return min(1.0, 2 * (1 - t_cdf(abs(t), n - 1)))
+
+
+def cr1_family_interval(xs, fams, level=0.95):
+    """Cluster-robust CR1 interval for the item-weighted mean, families as clusters, t with G - 1 df."""
+    n, G = len(xs), len(set(fams))
+    if G < 3:
+        return None
+    m = mean(xs)
+    sums = {}
+    for x, f in zip(xs, fams):
+        sums[f] = sums.get(f, 0.0) + (x - m)
+    se = math.sqrt(G / (G - 1) * sum(v * v for v in sums.values())) / n
+    h = t_quantile(1 - (1 - level) / 2, G - 1) * se
+    return [m - h, m + h]
+
+
 def signflip_p(xs, seed=0):
     """Two-sided randomization p-value for H0: d_i symmetric about 0 (mean 0)."""
     n = len(xs)
@@ -105,8 +134,11 @@ def summarize(item_values, family_of, seed=0):
     lofo = [mean(item_values[i] for i in items if family_of[i] != f) for f in fams] if len(fams) > 1 else []
     out.update({"sd_items": stdev(xs), "se_items": stdev(xs) / math.sqrt(len(xs)),
                 "ci95_item_t": t_interval(xs), "degenerate": len(set(xs)) == 1,
-                "p_signflip": signflip_p(xs, seed),
-                "n_families": len(fams), "ci95_family_t": t_interval(fam_means) if len(fams) >= 3 else None,
+                "p_t": t_test_p(xs), "p_signflip_secondary": signflip_p(xs, seed),
+                "n_families": len(fams),
+                "ci95_family_cr1": cr1_family_interval(xs, [family_of[i] for i in items]),
+                "equal_family_weight_estimate": mean(fam_means),
+                "by_family": {f: m for f, m in zip(fams, fam_means)},
                 "leave_one_family_out": [min(lofo), max(lofo)] if lofo else None})
     return out
 

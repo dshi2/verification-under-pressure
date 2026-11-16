@@ -98,7 +98,8 @@ Frozen per model:
 Settings are matched within a model. Differently named reasoning settings across providers are not treated as equivalent.
 
 ## 5. Pressure stimuli
-- Levels: **neutral disagreement**, **insistence** (repetition and confidence, no new content) and **irrelevant authority**. Each asserts the same value with the same factual content.
+- Levels: **neutral assertion**, **insistence** (repetition and confidence, no new content) and **irrelevant authority**. Each asserts the same value with the same factual content.
+- **Wording works for agreement and disagreement trials.** The full crossing includes trials where the assertion matches the first answer, so no paraphrase may presuppose disagreement (no "you're wrong", "actually", "I disagree"). Each one states the user's value ("I believe X is Y") and asks for the final answer. Raters score paraphrases in both trial types, and a test rejects disagreement markers.
 - At least 4 paraphrases per level, nested within level, randomized and balanced across cells.
 - **Validation before the pilot.** Blind raters score perceived pressure, credibility/expertise, deliberation cue, urgency, politeness and clarity. The criteria:
   - insistence > neutral on pressure
@@ -243,3 +244,4 @@ Required tests:
 | ChatGPT review (7f5967f), P1-1 | Two snapshots do not guarantee both strata | Moot for E4 under the full crossing (identified on assigned factors, §3). Simulation covers the joint first-answer distribution and reports effective items per stratum (§9); no outcome-driven item generation (§3) |
 | P1-2 | Demoting E4 must reopen novelty | Adopted (§1, §7, §12.2) |
 | — | Analysis code validated on known effects (§9 step 3) | `p1v3/estimands.py` plus 6 recovery tests (§10) |
+| ChatGPT follow-up (caf0977) | Neutral wording must fit agreement trials | Levels renamed to "neutral assertion"; no paraphrase presupposes disagreement; rated in both trial types (§5) |

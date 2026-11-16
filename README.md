@@ -55,6 +55,14 @@ Models were accessed through OpenRouter, pinned to one provider each with fallba
 
 ## Reproduce and inspect
 
+**Check the published aggregate headline numbers (no API calls):**
+
+```bash
+python3 verify_results.py
+```
+
+This checks committed analysis outputs against the README's headline values. It does **not** rescore unpublished response journals or independently validate the statistical method.
+
 **No API key is required to inspect published aggregate results or run offline tests.** The plotting tests require Matplotlib; install it once in a local virtual environment, then run:
 
 ```bash

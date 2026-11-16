@@ -5,7 +5,11 @@
 This document consolidates revision 2 (`docs/PROTOCOLS_v1.md`, P1 sections) with the rev 3/3b notes and the reviews of 16 Nov 2026, including the independent review on branch `audit/deep-review-2026-11-16`. Where they conflict, this document governs P1. The Codex v2 harness in `archive/codex-baseline-2026-11-16/` stays unchanged as the historical baseline. It is **not** the implementation of this spec (§10).
 
 ## 1. Question, contribution and claim boundary
-**Question (workflow).** Holding the factual dispute and the decisive record fixed, does social pressure change (a) whether an agent *obtains* the record when it can look it up, and (b) whether it *uses* it when supplied? And does the effect of an evidence-delivery policy on the pressure penalty differ between correct and incorrect user assertions?
+**Main research question (E4).** In binary registry-record tasks, does the effect of insistence versus a neutral assertion on final-answer correctness differ between optional lookup and automatically supplied evidence, and does that difference depend on whether the user assertion is correct? Snapshot versions are equally weighted; the randomized factors, denominator rules and exact contrast are defined in §§3 and 7.
+
+**Supporting questions, not interchangeable outcomes.** E1 asks whether insistence changes the probability of emitting a lookup attempt in the optional arm. E2 asks whether insistence changes final-answer correctness when the correct record is supplied. E3 asks whether evidence delivery changes the average insistence effect. Relevant-record retrieval is E1b, a separate secondary outcome. “Checking,” “obtaining evidence” and “using evidence” are not synonyms: an attempted lookup is not successful retrieval, and a correct answer is not direct observation of an internal reasoning process.
+
+**What remains to specify before confirmation.** Numeric meaningful-effect thresholds for E1–E4, model versions, the independent case population and the achieved precision must be fixed and justified (§§6–9). A precise question does not itself clear the novelty or validity gates.
 
 **Closest work** (none removes the question, but each narrows it):
 - Christian & Mazor, arXiv 2601.14553: optional self-consultation vs. injected blinded judgments.
@@ -18,7 +22,7 @@ This document consolidates revision 2 (`docs/PROTOCOLS_v1.md`, P1 sections) with
 
 **E4 carries the novelty.** If E4 cannot reach the §7 precision floor even after adding independent items, the novelty gate (C1–C7) is reopened **before the pilot**. The contribution sentence and defensible claim are rewritten around E1–E3, and P1 may leave the submission pair. The current novelty argument is never kept while E4 goes unestimated.
 
-**Defensible claim if positive:** "In this tested workflow, insistence changes [obtaining / using] decisive evidence, and supplying the record changes the pressure penalty [differently for correct and incorrect assertions]." Not claimed:
+**Defensible claim template:** "In the tested record tasks, the insistence effect on final-answer correctness differed between optional and supplied evidence by [estimate and interval]; that delivery-by-insistence contrast differed between correct and incorrect assertions by [E4 estimate and interval]." Report E1 lookup-attempt and E2 supplied-arm correctness findings separately, according to their own intervals. Not claimed:
 - an internal mechanism
 - full mediation by voluntary checking (it is a workflow effect)
 - that supplied-evidence results describe uncanonicalized tool use (§4.5)

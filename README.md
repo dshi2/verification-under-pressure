@@ -23,6 +23,9 @@
 - Too many contrasts labeled primary.
 - A failed turn 1 breaks the matching.
 - Length matching is done by padding with spaces.
+- **Disagreement is defined on the snapshot, not the model's answer.** The rev-3 notes set `snapshot_correct = not user_correct`, but the model's actual turn-1 answer can differ from the snapshot, so the "disagreement" stratum can contain agreement trials. Fix: inject turn 1 as a fixed, cached assistant message (and record that it was injected), or measure the actual first answer and define disagreement on it before the pressure arm is assigned. Rewording the interpretation is not enough. (ChatGPT review, 16 Nov.)
+- **Interpretation of the interaction.** In binary disagreement trials, user correctness and initial-answer correctness are perfectly anti-correlated. The pressure × evidence × user-correctness interaction therefore compares *correction* situations with *yielding* situations. It does not isolate sensitivity to truth independent of starting correctness.
+- **Precision for the interaction.** It needs its own simulation-based precision analysis, with item clustering and realistic missingness, before any confirmatory sizing.
 
 ## Governing documents (`docs/`)
 - `PROTOCOLS_v1.md`: revision 2 plus revision 3 / 3b amendment notes. A consolidated revision 3 specification is in progress; until then, revision 2 + the amendment notes apply.

@@ -1,0 +1,5 @@
+model,scheduled,exported,status_ok,final_malformed,final_valid,final_answer_unknown,truncated,turn1_eligible_current,turn1_eligible_stale,neutral_optional_attempt_rate,neutral_optional_attempt_n,neutral_supplied_adoption,neutral_supplied_adoption_n,strata_CU,strata_CW,strata_UU,strata_UW,strata_CC,strata_WW
+deepseek-v3.2,10800,10800,10800,20,10780,2725,0,1.0,1.0,1.0,1200,0.9924433249370277,1191,22,1,255,22,,
+gpt-oss-120b,10800,10800,10800,9,10791,1018,0,1.0,1.0,0.99,1200,0.9991652754590985,1198,90,55,85,70,,
+kimi-k2-0905,10800,10800,10800,,10800,4648,0,1.0,1.0,0.1675,1200,1.0,1200,70,18,145,67,,
+qwen3-235b-a22b-2507,10800,10800,10800,,10800,491,0,1.0,1.0,0.7975,1200,1.0,1200,33,204,23,33,5,2

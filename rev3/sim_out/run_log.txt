@@ -1,0 +1,60 @@
+sim_p1_coverage.py: reps=2000 boot=1000 workers=6 seed=20261116 numpy=2.5.2
+reference checks passed: item contrasts match estimands.estimate_one (max |diff| 1.7e-16, 10 item-estimand drops under heavy missingness), t intervals match inference.t_interval, sign-flip p (ref, vectorized) = [(0.9112, 0.9089), (0.287, 0.2832), (0.2285, 0.2244), (0.109, 0.1113), (0.0013, 0.0014), (0.0002, 0.0001)]
+extras: 28 asymmetric-effect cells, 12 unequal-family cells, 10000 reps, 29.6s
+55 scenarios
+  main|ceiling|null|n24|F6|base|light: 30.6s
+  main|ceiling|null|n60|F12|base|light: 41.0s
+  main|ceiling|null|n120|F12|base|light: 53.8s
+  main|ceiling|e4_0|n24|F6|base|light: 30.3s
+  main|ceiling|e4_0|n60|F12|base|light: 40.9s
+  main|ceiling|e4_0|n120|F12|base|light: 54.3s
+  main|ceiling|e4_small|n24|F6|base|light: 19.1s
+  main|ceiling|e4_small|n60|F12|base|light: 26.0s
+  main|ceiling|e4_small|n120|F12|base|light: 31.2s
+  main|ceiling|e4_large|n24|F6|base|light: 15.0s
+  main|ceiling|e4_large|n60|F12|base|light: 19.1s
+  main|ceiling|e4_large|n120|F12|base|light: 27.1s
+  main|moderate|null|n24|F6|base|light: 14.0s
+  main|moderate|null|n60|F12|base|light: 18.6s
+  main|moderate|null|n120|F12|base|light: 28.5s
+  main|moderate|e4_0|n24|F6|base|light: 11.2s
+  main|moderate|e4_0|n60|F12|base|light: 17.0s
+  main|moderate|e4_0|n120|F12|base|light: 26.6s
+  main|moderate|e4_small|n24|F6|base|light: 12.2s
+  main|moderate|e4_small|n60|F12|base|light: 19.5s
+  main|moderate|e4_small|n120|F12|base|light: 30.1s
+  main|moderate|e4_large|n24|F6|base|light: 13.3s
+  main|moderate|e4_large|n60|F12|base|light: 19.9s
+  main|moderate|e4_large|n120|F12|base|light: 29.0s
+  extreme|extreme|null|n24|F6|base|light: 15.4s
+  strongfam|moderate|null|n24|F6|strongfam|light: 15.4s
+  strongfam|moderate|e4_large|n24|F6|strongfam|light: 15.4s
+  extreme|extreme|null|n60|F12|base|light: 22.3s
+  strongfam|moderate|null|n60|F12|strongfam|light: 23.2s
+  strongfam|moderate|e4_large|n60|F12|strongfam|light: 24.0s
+  extreme|extreme|null|n120|F12|base|light: 32.4s
+  strongfam|moderate|null|n120|F12|strongfam|light: 32.7s
+  strongfam|moderate|e4_large|n120|F12|strongfam|light: 32.5s
+  heavymiss|ceiling|null|n60|F12|base|heavy: 21.6s
+  informative|ceiling|null|n60|F12|base|informative: 19.2s
+  heavymiss|ceiling|e4_large|n60|F12|base|heavy: 18.0s
+  informative|ceiling|e4_large|n60|F12|base|informative: 15.5s
+  heavymiss|moderate|null|n60|F12|base|heavy: 15.1s
+  informative|moderate|null|n60|F12|base|informative: 15.2s
+  heavymiss|moderate|e4_large|n60|F12|base|heavy: 14.7s
+  informative|moderate|e4_large|n60|F12|base|informative: 14.6s
+  precision|moderate|null|n72|F12|base|light: 15.4s
+  precision|moderate|e4_large|n72|F12|base|light: 15.3s
+  precision|moderate|null|n84|F12|base|light: 16.8s
+  precision|moderate|e4_large|n84|F12|base|light: 16.7s
+  precision|moderate|null|n96|F12|base|light: 18.0s
+  precision|moderate|e4_large|n96|F12|base|light: 18.9s
+  precision|ceiling|e4_large|n36|F6|base|light: 11.5s
+  precision|ceiling|e4_large|n48|F12|base|light: 17.1s
+  famcount|moderate|e4_large|n96|F16|base|light: 39.0s
+  famcount|moderate|e4_large|n96|F24|base|light: 34.1s
+  famcount|moderate|e4_large|n120|F20|base|light: 36.3s
+  famcount|moderate|e4_large|n120|F30|base|light: 38.4s
+  famcount|moderate|e4_large|n144|F24|base|light: 37.9s
+  famcount|moderate|e4_large|n144|F36|base|light: 36.8s
+done in 262.0s; outputs in /Users/divyansh/Documents/research_active/ai-epistemics/verification-under-pressure/rev3/sim_out

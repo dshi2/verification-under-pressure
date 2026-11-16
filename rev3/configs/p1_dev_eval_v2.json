@@ -1,0 +1,68 @@
+{
+ "run_id": "p1-dev-eval-v2-deepseek-siliconflow",
+ "allow_live": true,
+ "endpoint": "https://openrouter.ai/api/v1/chat/completions",
+ "spend_cap_usd": null,
+ "seed": 20261116,
+ "timeout_s": 600,
+ "max_retries": 6,
+ "halt_error_rate": 0.2,
+ "halt_transient_aborts": 25,
+ "models": {
+  "deepseek-v3.2": {
+   "slug": "deepseek/deepseek-v3.2",
+   "provider": "siliconflow/fp8",
+   "provider_name": "SiliconFlow",
+   "quantization": "fp8",
+   "params": {
+    "max_tokens": 8192,
+    "reasoning": {
+     "enabled": true
+    }
+   },
+   "price_in_per_m": 0.259,
+   "price_out_per_m": 0.8,
+   "concurrency_start": 256,
+   "concurrency_max": 256
+  },
+  "gpt-oss-120b": {
+   "slug": "openai/gpt-oss-120b",
+   "provider": "deepinfra/bf16",
+   "provider_name": "DeepInfra",
+   "quantization": "bf16",
+   "params": {
+    "max_tokens": 8192
+   },
+   "price_in_per_m": 0.04,
+   "price_out_per_m": 0.17,
+   "concurrency_start": 256,
+   "concurrency_max": 256
+  },
+  "kimi-k2-0905": {
+   "slug": "moonshotai/kimi-k2-0905",
+   "provider": "novita/fp8",
+   "provider_name": "Novita",
+   "quantization": "fp8",
+   "params": {
+    "max_tokens": 8192
+   },
+   "price_in_per_m": 0.6,
+   "price_out_per_m": 2.5,
+   "concurrency_start": 256,
+   "concurrency_max": 256
+  },
+  "qwen3-235b-a22b-2507": {
+   "slug": "qwen/qwen3-235b-a22b-2507",
+   "provider": "deepinfra/fp8",
+   "provider_name": "DeepInfra",
+   "quantization": "fp8",
+   "params": {
+    "max_tokens": 8192
+   },
+   "price_in_per_m": 0.09,
+   "price_out_per_m": 0.55,
+   "concurrency_start": 256,
+   "concurrency_max": 256
+  }
+ }
+}

@@ -17,7 +17,10 @@ Stops, with a message, when
 - PAUSE file / Ctrl-C (a person stopped it), HTTP 401/402/403 (key or credit), terminal-failure rate
   above halt_error_rate (systematic error), spend cap, disk or journal problems, or
 - the runner refused to start (lock held by a live runner, changed design, corrupt journal, no key), or
-- --max-resumes is reached.
+- --max-resumes is reached, or
+- no-progress circuit breaker: 3 consecutive resume cycles add no completed stage key (unique journaled
+  results), so a persistent defect cannot crash-loop unattended.
+"complete" means every planned task ran; it is NOT a data-quality verdict. Run the analysis checks after.
 """
 import argparse
 import json
@@ -27,6 +30,23 @@ import sys
 import time
 
 RESUMABLE = ("too many tasks aborted on transient errors",)
+NO_PROGRESS_LIMIT = 3
+
+
+def done_count(run_dir):
+    """Unique journaled stage results, read from the journal (works whether or not a summary was written)."""
+    seen = set()
+    try:
+        with open(os.path.join(run_dir, "journal.jsonl")) as f:
+            for line in f:
+                if '"type": "result"' in line:
+                    try:
+                        seen.add(json.loads(line)["key"])
+                    except (ValueError, KeyError):
+                        pass  # torn last line: the runner repairs it on resume
+    except OSError:
+        pass
+    return len(seen)
 
 
 def log(msg):
@@ -51,7 +71,7 @@ def main():
         ap.error("the run command needs --run-dir")
     run_dir = cmd[cmd.index("--run-dir") + 1]
     journal, summary_path = os.path.join(run_dir, "journal.jsonl"), os.path.join(run_dir, "summary.json")
-    wait, prev_done = a.wait, None
+    wait, prev_done, stalls = a.wait, None, 0
     for n in range(a.max_resumes + 1):
         resume = os.path.exists(journal)
         launch = cmd + (["--resume"] if resume and "--resume" not in cmd else [])
@@ -85,6 +105,14 @@ def main():
         else:
             log(f"runner refused to start or failed before any progress (exit {code}); fix, then rerun")
             return 5
+        done = done_count(run_dir)
+        progressed = prev_done is None or done > prev_done
+        stalls = 0 if progressed else stalls + 1
+        prev_done = done
+        if stalls >= NO_PROGRESS_LIMIT:
+            log(f"no-progress circuit breaker: {stalls} consecutive cycles added no completed stage "
+                f"({done} done); inspect before rerunning the same command")
+            return 7
         if n == a.max_resumes:
             break
         log(f"waiting {wait:.0f} s before resuming")
@@ -93,9 +121,6 @@ def main():
         except KeyboardInterrupt:
             log("Ctrl-C during wait: stopped; resume with the same command")
             return 130
-        done = s.get("unique_stage_results") if wrote_summary else None
-        progressed = done is not None and (prev_done is None or done > prev_done)
-        prev_done = done if done is not None else prev_done
         wait = a.wait if progressed else min(wait * 2, 600.0)  # back off only while nothing new completes
     log(f"max resumes ({a.max_resumes}) reached; rerun the same command to continue")
     return 6

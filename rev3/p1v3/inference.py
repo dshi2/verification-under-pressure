@@ -16,8 +16,16 @@ the item is the cluster and a one-sample analysis of {d_i} is the cluster-robust
 Holm adjustment (on the t-test p-values) is applied across the primary family E1-E4 within each model x
 pressure contrast.
 
-PROVISIONAL: §9's coverage simulation has not yet selected the confirmatory interval method. These numbers
-describe development data and decide no hypothesis.
+Family-level sensitivity columns (added after SIM_P1_COVERAGE.md §3 R1/R3; the PI has not changed the primary):
+- p_family_cr1: t-test matching ci95_family_cr1 (CR1 SE, G - 1 df);
+- p_signflip_family: exact sign-flip over family totals (tests the same item-weighted mean); its smallest
+  attainable p is 2 / 2^G (0.031 with 6 families, so no Holm rejection over 4 contrasts is possible);
+- ci95_equal_family_t: t over family means for the equal-family estimate (a different estimand when family
+  sizes differ);
+- excludes0_item_t_only: the item t interval excludes 0 but the CR1 family interval does not.
+
+PROVISIONAL: the §9 coverage simulation recommends a family-clustered method (SIM_P1_COVERAGE.md §3) but the PI
+has not fixed the confirmatory method. These numbers describe development data and decide no hypothesis.
 """
 import math
 import random
@@ -123,6 +131,50 @@ def signflip_p(xs, seed=0):
     return (hits + 1) / (B_FLIPS + 1)
 
 
+def cr1_family_p(xs, fams):
+    """Two-sided p for H0: item-weighted mean = 0, CR1 SE with families as clusters, t with G - 1 df.
+    The test that matches ci95_family_cr1 (same centre, same SE, same df)."""
+    n, G = len(xs), len(set(fams))
+    if G < 3:
+        return None
+    m = mean(xs)
+    sums = {}
+    for x, f in zip(xs, fams):
+        sums[f] = sums.get(f, 0.0) + (x - m)
+    se = math.sqrt(G / (G - 1) * sum(v * v for v in sums.values())) / n
+    if se == 0:
+        return 1.0 if m == 0 else 0.0
+    return min(1.0, 2 * (1 - t_cdf(abs(m / se), G - 1)))
+
+
+def family_signflip_p(xs, fams, seed=0):
+    """Two-sided family-level sign-flip p for H0: family totals of d_i symmetric about 0 (cluster randomization).
+    Flips whole families: statistic |sum_f s_f T_f| with T_f = sum of d_i in family f, so it tests the same
+    item-weighted mean the estimate reports (with equal family sizes this is the flip over family means).
+    Exact enumeration when G <= 16 (smallest attainable p = 2 / 2^G), else 20,000 random flips."""
+    tot = {}
+    for x, f in zip(xs, fams):
+        tot[f] = tot.get(f, 0.0) + x
+    T = list(tot.values())
+    G = len(T)
+    if G == 0:
+        return None
+    obs = abs(sum(T))
+    if obs == 0:
+        return 1.0
+    if G <= 16:
+        hits = sum(abs(sum(t if s else -t for t, s in zip(T, signs))) >= obs - 1e-12
+                   for signs in product((0, 1), repeat=G))
+        return hits / 2 ** G
+    rng = random.Random(seed)
+    hits = sum(abs(sum(t if rng.random() < 0.5 else -t for t in T)) >= obs - 1e-12 for _ in range(B_FLIPS))
+    return (hits + 1) / (B_FLIPS + 1)
+
+
+def excludes_zero(ci):
+    return None if not ci else (ci[0] > 0 or ci[1] < 0)
+
+
 def summarize(item_values, family_of, seed=0):
     items = sorted(item_values)
     xs = [item_values[i] for i in items]
@@ -132,14 +184,25 @@ def summarize(item_values, family_of, seed=0):
     fams = sorted({family_of[i] for i in items})
     fam_means = [mean(item_values[i] for i in items if family_of[i] == f) for f in fams]
     lofo = [mean(item_values[i] for i in items if family_of[i] != f) for f in fams] if len(fams) > 1 else []
+    fam_of_x = [family_of[i] for i in items]
     out.update({"sd_items": stdev(xs), "se_items": stdev(xs) / math.sqrt(len(xs)),
                 "ci95_item_t": t_interval(xs), "degenerate": len(set(xs)) == 1,
                 "p_t": t_test_p(xs), "p_signflip_secondary": signflip_p(xs, seed),
                 "n_families": len(fams),
-                "ci95_family_cr1": cr1_family_interval(xs, [family_of[i] for i in items]),
+                "family_sizes": sorted({sum(1 for g in fam_of_x if g == f) for f in fams}),
+                "ci95_family_cr1": cr1_family_interval(xs, fam_of_x),
                 "equal_family_weight_estimate": mean(fam_means),
                 "by_family": {f: m for f, m in zip(fams, fam_means)},
                 "leave_one_family_out": [min(lofo), max(lofo)] if lofo else None})
+    # Family-level sensitivity (SIM_P1_COVERAGE.md §3 R1/R3). Labelled sensitivity; the primary is unchanged.
+    out.update({"p_family_cr1": cr1_family_p(xs, fam_of_x),
+                "p_signflip_family": family_signflip_p(xs, fam_of_x, seed),
+                "p_signflip_family_min_attainable": (2 / 2 ** len(fams)) if len(fams) <= 16 else None,
+                # t over family means (df = F - 1) is the interval for the equal-family estimate, a different
+                # estimand from the item-weighted mean whenever family sizes differ (combined: 4 vs 6 items)
+                "ci95_equal_family_t": t_interval(fam_means) if len(fams) > 1 else None})
+    item_ex, fam_ex = excludes_zero(out["ci95_item_t"]), excludes_zero(out["ci95_family_cr1"])
+    out["excludes0_item_t_only"] = bool(item_ex and fam_ex is False and not out["degenerate"])
     return out
 
 

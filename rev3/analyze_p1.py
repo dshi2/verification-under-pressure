@@ -1,6 +1,7 @@
 """Analyse a P1 run's trials.jsonl: validity checks first, then E1-E4 per model (spec §7). No pooling.
 
-  python3 analyze_p1.py --run-dir runs/X     -> runs/X/analysis.json and runs/X/analysis.md
+  python3 analyze_p1.py --run-dir runs/X                 -> runs/X/analysis.json and runs/X/analysis.md
+  python3 analyze_p1.py --run-dir runs/A runs/B --out DIR  (base + extension together; models must match)
 
 Estimates are point estimates with sign-aware assigned-denominator bounds (p1v3.estimands); the interval
 method waits on the §9 coverage simulation, so no hypothesis decision is made here. The schedule is checked
@@ -12,11 +13,12 @@ import os
 import sys
 from collections import Counter, defaultdict
 
-from p1v3.estimands import ESTIMANDS, estimate_by_model
+from p1v3.estimands import CELLS, ESTIMANDS, PRIMARY, estimate_by_model
+from p1v3.inference import holm, summarize
 
 ROLES = {}  # every configuration is primary
 LABEL = ("DEVELOPMENT-CASE EVALUATION: builder-written dev families, pressure paraphrases not yet rated (§5), "
-         "no interval method (§9). Not confirmatory evidence.")
+         "intervals and p-values provisional until the §9 simulation picks the method. Not confirmatory evidence.")
 
 
 def rate(xs):
@@ -50,6 +52,22 @@ def validity(trials):
     return out
 
 
+def cells(trials):
+    """Per model x cell: mean of final_correct, conceded, lookup_attempted over observed trials (descriptive; plots)."""
+    out = {}
+    for m in sorted({t["model"] for t in trials}):
+        acc = defaultdict(lambda: defaultdict(list))
+        for t in trials:
+            if t["model"] != m:
+                continue
+            c = "/".join((t["snapshot"], t["assertion"], t["pressure"], t["route"]))
+            for k in ("final_correct", "conceded", "lookup_attempted"):
+                if t.get(k) is not None:
+                    acc[c][k].append(t[k])
+        out[m] = {"/".join(c): {k: (sum(v) / len(v), len(v)) for k, v in acc["/".join(c)].items()} for c in CELLS}
+    return out
+
+
 def strata(tm):
     """Joint first-answer correctness on (current, stale) per item x repeat (§3): C correct, W wrong,
     U unknown answer, ? ineligible / failed / missing."""
@@ -65,29 +83,51 @@ def strata(tm):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--run-dir", required=True)
+    ap.add_argument("--run-dir", required=True, nargs="+")
+    ap.add_argument("--out", help="output directory (default: the single --run-dir)")
     ap.add_argument("--strict", action="store_true",
                     help="exit 1 unless the schedule matches the manifest and every E1-E4 is estimable for every model")
     a = ap.parse_args()
-    with open(os.path.join(a.run_dir, "trials.jsonl")) as f:
-        trials = [json.loads(x) for x in f if x.strip()]
-    with open(os.path.join(a.run_dir, "manifest.json")) as f:
-        man = json.load(f)
-    manifest = [dict(r, model=m) for m in man["models"] for r in man["design_rows"]]
-    res = {"label": LABEL, "roles": ROLES, "validity": validity(trials), "estimates": {}}
+    if len(a.run_dir) > 1 and not a.out:
+        ap.error("--out is required with several --run-dir")
+    out_dir = a.out or a.run_dir[0]
+    os.makedirs(out_dir, exist_ok=True)
+    trials, manifest, man = [], [], {"models": None, "run_dirs": a.run_dir}
+    for d in a.run_dir:
+        with open(os.path.join(d, "trials.jsonl")) as f:
+            trials += [json.loads(x) for x in f if x.strip()]
+        with open(os.path.join(d, "manifest.json")) as f:
+            m = json.load(f)
+        if man["models"] not in (None, m["models"]):
+            raise SystemExit(f"{d}: models differ from the first run; runs cannot be combined")
+        man["models"] = m["models"]
+        manifest += [dict(r, model=mo) for mo in m["models"] for r in m["design_rows"]]
+    ids = [t["item_id"] for t in trials]
+    family_of = {t["item_id"]: t["family"] for t in trials}
+    res = {"label": LABEL, "roles": ROLES, "run_dirs": a.run_dir, "n_items": len(set(ids)),
+           "n_families": len(set(family_of.values())), "validity": validity(trials), "cells": cells(trials),
+           "estimates": {}}
     for p in ("insistence", "authority"):
         try:
             res["estimates"][p] = estimate_by_model(trials, pressure=p, manifest=manifest)
         except ValueError as e:
             res["estimates"][p] = {"error": str(e)}
-    with open(os.path.join(a.run_dir, "analysis.json"), "w") as f:
+            continue
+        for m, est in res["estimates"][p].items():
+            for name in ESTIMANDS:
+                est[name]["inference"] = summarize(est[name].pop("item_values"), family_of, seed=ESTIMANDS.index(name))
+            adj = holm({n: est[n]["inference"].get("p_signflip") for n in PRIMARY})
+            for n in PRIMARY:
+                est[n]["inference"]["p_holm_primary"] = adj.get(n)
+    with open(os.path.join(out_dir, "analysis.json"), "w") as f:
         json.dump(res, f, indent=1, sort_keys=True, default=str)
-    md = [f"# P1 analysis", "", f"**{LABEL}**", ""]
+    md = [f"# P1 analysis", "", f"**{LABEL}**", "", f"Runs {a.run_dir}: {res['n_items']} items, {res['n_families']} families. Intervals and p-values are provisional (§9 has not chosen the method); Holm is across E1–E4 within model × pressure.", ""]
     for m, v in res["validity"].items():
         md += [f"## {m}" + (f" — {ROLES[m]}" if m in ROLES else ""), "", f"Status {v['status']}. Turn-1 eligibility {v['turn1_eligible_by_snapshot']}. "
                f"Neutral optional attempt rate {v['neutral_optional_attempt_rate']}. Neutral supplied adoption "
                f"{v['neutral_supplied_adoption']}. Truncated {v['truncated']}.", "",
-               "| contrast | pressure | estimate | assigned-denominator bounds | items used / dropped |", "|---|---|---|---|---|"]
+               "| contrast | pressure | estimate | 95% CI items (provisional) | 95% CI families | sign-flip p (Holm, primary) | assigned-denominator bounds | items used / dropped |",
+               "|---|---|---|---|---|---|---|---|"]
         for p, est in res["estimates"].items():
             e = est.get(m) if isinstance(est, dict) else None
             if not e:
@@ -95,10 +135,18 @@ def main():
                 continue
             for name in ESTIMANDS:
                 r = e[name]
-                md.append(f"| {name} | {p} | {r.get('estimate')} | {r.get('bounds')} | "
+                inf = r.get("inference", {})
+                f3 = lambda v: "–" if v is None else f"{v:+.3f}"
+                ci = lambda c: "–" if not c else f"[{c[0]:+.3f}, {c[1]:+.3f}]"
+                deg = " (degenerate: zero spread, not precision)" if inf.get("degenerate") else ""
+                ph = inf.get("p_holm_primary")
+                pv = "–" if inf.get("p_signflip") is None else f"{inf['p_signflip']:.2g}" + (f" ({ph:.2g})" if ph is not None else "")
+                b = r.get("bounds") or (None, None)
+                md.append(f"| {name} | {p} | {f3(r.get('estimate'))} | {ci(inf.get('ci95_item_t'))}{deg} | "
+                          f"{ci(inf.get('ci95_family_t'))} | {pv} | [{f3(b[0])}, {f3(b[1])}] | "
                           f"{r.get('items_used')} / {r.get('items_dropped_incomplete')} |")
         md.append("")
-    with open(os.path.join(a.run_dir, "analysis.md"), "w") as f:
+    with open(os.path.join(out_dir, "analysis.md"), "w") as f:
         f.write("\n".join(md))
     print("\n".join(md))
     if a.strict:

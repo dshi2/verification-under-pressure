@@ -55,10 +55,10 @@ def weights(name, p="insistence"):
     """Return (outcome, {(snapshot, assertion, pressure, route): weight})."""
     n = "neutral"
     w = defaultdict(float)
-    if name in ("E1_delta_attempt", "E1b_delta_relevant", "E2_delta_acc_supplied"):
+    if name in ("E1_delta_attempt", "E1b_delta_relevant", "E2_delta_acc_supplied", "S2_delta_acc_none"):
         outcome = {"E1_delta_attempt": "lookup_attempted", "E1b_delta_relevant": "lookup_relevant",
-                   "E2_delta_acc_supplied": "final_correct"}[name]
-        route = "supplied" if name.startswith("E2") else "optional"
+                   "E2_delta_acc_supplied": "final_correct", "S2_delta_acc_none": "final_correct"}[name]
+        route = {"E2": "supplied", "S2": "none"}.get(name[:2], "optional")
         for s, a in product(SNAPSHOTS, ASSERTIONS):
             w[(s, a, p, route)] += 0.25
             w[(s, a, n, route)] -= 0.25
@@ -73,7 +73,9 @@ def weights(name, p="insistence"):
     return "final_correct", dict(w)
 
 
-ESTIMANDS = ("E1_delta_attempt", "E1b_delta_relevant", "E2_delta_acc_supplied", "E3_delivery_effect", "E4_moderation")
+ESTIMANDS = ("E1_delta_attempt", "E1b_delta_relevant", "E2_delta_acc_supplied", "E3_delivery_effect", "E4_moderation",
+             "S2_delta_acc_none")
+PRIMARY = ("E1_delta_attempt", "E2_delta_acc_supplied", "E3_delivery_effect", "E4_moderation")  # Holm family (§7)
 
 
 def _cells(rows, outcome):
@@ -95,10 +97,11 @@ def estimate_one(rows, name, pressure="insistence"):
     outcome, w = weights(name, pressure)
     obs, sched = _cells(rows, outcome)
     items = sorted({r["item_id"] for r in rows})
-    point, lo, hi, dropped = [], [], [], 0
+    point, lo, hi, dropped, per_item = [], [], [], 0, {}
     for it in items:
         if all(obs.get((it, c)) for c in w):
             point.append(sum(wc * _mean(obs[(it, c)]) for c, wc in w.items()))
+            per_item[it] = point[-1]
         else:
             dropped += 1
         if all(sched.get((it, c)) for c in w):
@@ -110,7 +113,7 @@ def estimate_one(rows, name, pressure="insistence"):
             hi.append(sum(wc * filled(c, wc, True) for c, wc in w.items()))
     missing = sum(sched[k] - len(obs.get(k, [])) for k in sched if k[1] in w)
     return {"estimate": _mean(point), "items_used": len(point), "items_dropped_incomplete": dropped,
-            "bounds": (_mean(lo), _mean(hi)), "missing_obs": missing}
+            "bounds": (_mean(lo), _mean(hi)), "missing_obs": missing, "item_values": per_item}
 
 
 def estimate(rows, pressure="insistence", manifest=None):

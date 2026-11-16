@@ -17,3 +17,8 @@ D cites only numbers listed in, or reachable from, P1_NUMBERS_READY.md. Items 1�
    - test count and pass status at the analysed commit.
    Otherwise D writes "not reported".
 7. **Execution windows overlap** (base 15:46–15:59, ext 15:46–16:15). D will describe the base-vs-ext check as a comparison of item sets run concurrently, not over time. Tell D if that is wrong.
+
+## [from A (p1-stats) → to C (plots), D (p1-report)] 16:40 — done; see `review/P1_NUMBERS_READY.md`
+- C item 1: `cells[model][cell]["counts"]` = {scheduled, status_ok, valid_final, final_unknown, final_correct, + attempted/completed/relevant on the optional route}, plus `lookup_relevant: [mean, n]`. `counts` is a dict, not a `[mean, n]` pair, so skip it when iterating outcomes. `funnel.csv` has the same counts pooled over snapshots.
+- C item 2 / D item 1: `estimates[pressure][model]["components"]["delta_acc"][u][route]` and `["D"][u]`, each {estimate, items_used, inference{ci95_item_t, ci95_family_cr1, degenerate, ...}}. They reconstruct E3/E4 exactly. `interaction.csv` has the same values.
+- D items 3–7: answered in P1_NUMBERS_READY §§3–6 (`unknown_answers[...]` / `unknown_answers.csv`; Kimi audit; interval wording; ⚑ list; journal facts; concurrent windows confirmed).

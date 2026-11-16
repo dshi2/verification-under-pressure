@@ -11,7 +11,7 @@ _Research conducted at the AI × Epistemics Research Sprint, November 2026._
 
 ## Abstract
 
-Sycophancy evaluations usually ask whether a model abandons a correct answer under pushback, yet assistants increasingly work in workflows that can consult authoritative records. We ask where user pressure acts in such a workflow, on the choice to look a record up or on using a record already in context, and whether this depends on whether the user is right. In a randomized two-turn experiment on 60 builder-written registry items, we crossed snapshot currency, assigned user correctness, pressure (neutral, insistence, irrelevant authority) and evidence route (none, optional lookup tool, record supplied automatically) for four open-weight models, 43,200 trials in all. Insistence lowered optional lookup attempts in every model, by 1.3 (DeepSeek-V3.2) to 49.7 percentage points (Qwen3-235B), but changed accuracy with the record supplied by at most 2.4 points. For Qwen3-235B and gpt-oss-120b, supplying the record instead of offering it reduced the insistence penalty on accuracy (+25.6 and +4.5 points), mainly when the user was wrong. This is same-sign amplification, not reversal, and these estimates exclude zero under family-clustered intervals. Items are builder-written and the pressure wording is unrated, so generalization to independently constructed tasks remains to be tested.
+Sycophancy evaluations usually ask whether a model abandons a correct answer under pushback, yet assistants increasingly work in workflows that can consult authoritative records. We ask where user pressure acts in such a workflow, on the choice to look a record up or on using a record already in context, and whether this depends on whether the user is right. In a randomized two-turn experiment on 60 builder-written registry items, we crossed snapshot currency, assigned user correctness, pressure (neutral, insistence, irrelevant authority) and evidence route (none, optional lookup tool, record supplied automatically) for four open-weight models, 43,200 trials in all. Insistence lowered optional lookup attempts in every model, by 1.3 (DeepSeek-V3.2, near a ceiling) to 49.7 percentage points (Qwen3-235B). With the record supplied, it changed accuracy by at most 0.4 points in three models and by 2.4 in DeepSeek-V3.2. For Qwen3-235B and gpt-oss-120b, supplying the record instead of offering it reduced the insistence penalty on accuracy (+25.6 and +4.5 points), mainly when the user was wrong. This is same-sign amplification, not reversal, and these estimates exclude zero under family-clustered intervals. Items are builder-written and the pressure wording is unrated, so generalization to independently constructed tasks remains to be tested. Code and data: https://github.com/dshi2/verification-under-pressure
 
 ---
 
@@ -28,7 +28,7 @@ Models shift answers toward user-stated views and abandon correct answers when c
 
 The fourth matters for judging delivery policies. When the user is **wrong**, the record contradicts them, so supplying it may prevent a concession; when the user is **right**, it may help less or not at all. An evaluation with only wrong pushback, the usual sycophancy setting, sees only the first case.
 
-**What we found.** Insistence lowered optional lookup attempts in all four models, by 1.3 to 49.7 percentage points, while changing accuracy with the record supplied by at most 2.4 points. For Qwen3-235B and gpt-oss-120b, supplying the record reduced the insistence penalty on accuracy (+25.6 and +4.5 points), and did so more when the user was wrong than when right (Qwen: +45.8 vs. +5.3 points; gpt-oss: +6.8 vs. +2.2). This is same-sign amplification, not reversal. DeepSeek-V3.2 looked the record up almost every time, so supplied delivery gained nothing. Kimi-K2 rarely used the tool, and its delivery estimates include zero under the main interval.
+**What we found.** Insistence lowered optional lookup attempts in all four models, by 1.3 to 49.7 percentage points, while changing accuracy with the record supplied by at most 0.4 points in three models (2.4 in DeepSeek-V3.2, whose lookups were near a ceiling). For Qwen3-235B and gpt-oss-120b, supplying the record reduced the insistence penalty on accuracy (+25.6 and +4.5 points), and did so more when the user was wrong than when right (Qwen: +45.8 vs. +5.3 points; gpt-oss: +6.8 vs. +2.2). This is same-sign amplification, not reversal. DeepSeek-V3.2 looked the record up almost every time, so supplied delivery gained nothing. Kimi-K2 rarely used the tool, and its delivery estimates include zero under the main interval.
 
 **Contributions.** (1) A randomized crossing of evidence delivery (with identical tool results), pressure and *assigned* user correctness, which identifies E4 on manipulated factors rather than on which first answers happened to be wrong. (2) Workflow-level measurement: lookup attempt, relevant retrieval, use of supplied evidence and validity failures are separate outcomes, and an invalid output is never scored as "did not check". (3) Per-model estimates for four open-weight models, with family-clustered intervals.
 
@@ -78,7 +78,7 @@ Results are reported **per model**; no pooling rule was prespecified. Trials sha
 
 ### 4.1 Run summary and validity
 
-All 43,200 trials completed ($9.83); 29 final answers (0.07%) were invalid. Neutral adoption of a supplied record (positive control) was 99.2–100%. Neutral optional lookup rates were 100% (DeepSeek), 99.0% (gpt-oss), 79.8% (Qwen) and 16.8% (Kimi), so Kimi's E1 rests on a low base rate. Turn-1 answers were often `unknown` (DeepSeek 92%, Kimi 71%), so for those models E4 cannot be read purely as correction vs. erroneous concession (Appendices H and J).
+All 43,200 trials completed (API cost $9.83); 29 final answers (0.07%) were invalid. Neutral adoption of a supplied record (positive control) was 99.2–100%. Neutral optional lookup rates were 100% (DeepSeek), 99.0% (gpt-oss), 79.8% (Qwen) and 16.8% (Kimi), so Kimi's E1 rests on a low base rate. Turn-1 answers were often `unknown` (DeepSeek 92%, Kimi 71%), so for those models E4 cannot be read purely as correction vs. erroneous concession (Appendices H and J).
 
 ### 4.2 Primary contrasts by model
 
@@ -103,7 +103,7 @@ Insistence lowered lookup attempts in all four models (E1): Qwen by 49.7 pp from
 
 **Figure 2. Pressure × delivery, by user correctness (insistence vs. neutral).** (A, B) Change in final accuracy under optional lookup and with the record supplied, when the user asserts the correct value (A) or the wrong value (B); the slope of each line is D(u). (C) E3 and E4 with item-level (thin) and family-clustered (thick) 95% intervals; † excludes 0 on the item interval only. 60 items, 12 families.
 
-- **E3.** Supplying the record reduced the insistence penalty for Qwen (+25.6 pp) and gpt-oss (+4.5 pp); both exclude 0 under both intervals and all three Holm-adjusted tests. Kimi's +5.1 pp excludes 0 under the item interval only (CR1 [−0.4, +10.5]). DeepSeek's −1.8 pp excludes 0 under both: with lookups at ceiling, its supplied route carried a slightly larger penalty.
+- **E3.** Supplying the record reduced the insistence penalty for Qwen (+25.6 pp) and gpt-oss (+4.5 pp); both exclude 0 under both intervals and all three Holm-adjusted tests (item-level t, CR1 and sign-flip). Kimi's +5.1 pp excludes 0 under the item interval only (CR1 [−0.4, +10.5]). DeepSeek's −1.8 pp excludes 0 under both: with lookups at ceiling, its supplied route carried a slightly larger penalty.
 - **E4.** No model shows D(right) and D(wrong) of opposite sign, so there is no reversal. For Qwen, D(wrong) = +45.8 vs. D(right) = +5.3 pp (E4 −40.5); for gpt-oss, +6.8 vs. +2.2 pp (E4 −4.7). Both E4 values exclude 0 under both intervals: supplying the record helped more when the user was wrong. When the user was right the benefit was smaller, and for gpt-oss it includes 0 under the main interval. DeepSeek's E4 (+2.5) excludes 0 under the item interval only; Kimi's (+1.5) includes 0 under both.
 - Components of D(right) and D(wrong) are in Table J3.
 
@@ -115,11 +115,11 @@ Most authority-vs-neutral contrasts include 0 (the authority cue is unrated); th
 
 ## 5. Discussion and Limitations
 
-**Interpretation.** In these items, insistence acted mainly on the *decision to look the record up*, not on the use of a record already present: E1 was negative in all four models, while |E2| ≤ 2.4 pp. For Qwen and gpt-oss, supplying the record reduced the insistence penalty, mainly when the user was wrong, matching the "correctness-dependent protection, amplification" reading fixed before the results (Appendix K). Within these tasks, two consequences follow for evaluating delivery policies. First, an evaluation with only wrong pushback would overstate the general benefit of supplying the record (for Qwen, +45.8 pp when the user is wrong vs. +5.3 pp when right). Second, no model showed a reliable cost of supplying the record when the user was right (D(right) from −0.5 to +5.8 pp; DeepSeek's −0.5 includes 0). Seeking evidence and using supplied evidence came apart across models, as answer concession and agentic violations did in Basta et al. (2026).
+**Interpretation.** In these items, insistence acted mainly on the *decision to look the record up*, not on the use of a record already present, in three of four models: E1 ranged from −5.8 to −49.7 pp, while |E2| ≤ 0.4 pp. DeepSeek, which looked records up almost every time, is the exception (E1 −1.3, E2 −2.4 pp). For Qwen and gpt-oss, supplying the record reduced the insistence penalty, mainly when the user was wrong, matching the "correctness-dependent protection, amplification" reading fixed before the results (Appendix K). Within these tasks, two consequences follow for evaluating delivery policies. First, an evaluation with only wrong pushback would overstate the general benefit of supplying the record (for Qwen, +45.8 pp when the user is wrong vs. +5.3 pp when right). Second, no model showed a reliable cost of supplying the record when the user was right (D(right) from −0.5 to +5.8 pp; DeepSeek's −0.5 includes 0). Seeking evidence and using supplied evidence came apart across models, as answer concession and agentic violations did in Basta et al. (2026).
 
 ### Limitations
 
-- **Development cases.** All items are builder-written from one template, and the pressure paraphrases are unrated.
+- **Development cases.** All items are builder-written from one template, and the pressure paraphrases are unrated. The run is a development evaluation, not a confirmatory test.
 - **Provisional inference.** The interval method was changed after the coverage simulation, and with 12 families the main interval has 11 df. No smallest effect of interest is fixed.
 - **Measurement.** `unknown` answers are scored as incorrect. The workflow is canonicalized: lookups are free, instant and correct.
 - **Scope.** Four open-weight models were tested at provider defaults.
@@ -136,7 +136,7 @@ The full list, with dual-use and ethical considerations, is in the appendix "Lim
 
 ## 6. Conclusion
 
-We separated where user insistence acts in a record-verification workflow: choosing to look, retrieving the right record, using a supplied record, and whether the user is right. Across four open-weight models, insistence reduced optional lookups (by 1.3–49.7 pp) far more than it changed use of a supplied record (at most 2.4 pp). For Qwen3-235B and gpt-oss-120b, supplying the record protected mostly against wrong insistence: same-sign amplification, with no reversal.
+We separated where user insistence acts in a record-verification workflow: choosing to look, retrieving the right record, using a supplied record, and whether the user is right. In three of four open-weight models, insistence reduced optional lookups (by 5.8–49.7 pp) far more than it changed use of a supplied record (at most 0.4 pp); DeepSeek-V3.2, near a lookup ceiling, changed little on either. For Qwen3-235B and gpt-oss-120b, supplying the record protected mostly against wrong insistence: same-sign amplification, with no reversal.
 
 These results come from builder-written items with unrated pressure wording; whether they hold on independently written tasks is untested.
 
@@ -144,8 +144,8 @@ These results come from builder-written items with unrated pressure wording; whe
 
 ## Code and Data
 
-- **Repository:** https://github.com/dshi2/verification-under-pressure, branch `p1-revision-3`, analysis code at commit `8b6af31`.
-- **Published results:** `rev3/results/`, containing the analysis outputs (`combined/`, `base/`, `ext/`), the independent recomputation (`audit/`) and the SHA-256 hashes of the raw-data archives.
+- **Repository:** https://github.com/dshi2/verification-under-pressure.
+- **Published results:** `rev3/results/`, containing the analysis outputs (`combined/`, `base/`, `ext/`), a separate recomputation (`audit/`) and the SHA-256 hashes of the raw-data archives.
 - **Raw data:** the raw journals and trial files are not in git. They are archived with SHA-256 hashes.
 
 Key files:
@@ -701,6 +701,6 @@ Trial counts by user correctness, with denominators, are in Table J1 (Appendix J
 
 ## LLM Usage Statement
 
-We used LLM assistants (Anthropic's Claude and OpenAI's ChatGPT) for code development, analysis scripting, literature search, figure generation and drafting this report. ChatGPT also acted as an internal reviewer. Every reported number comes from the repository's analysis code and was reproduced by a separate recomputation script (`verify_p1_independent.py`, 0 mismatches). Cited works were checked against their arXiv or journal records. The authors are responsible for the final content.
+We used LLM assistants (Anthropic's Claude and OpenAI's ChatGPT) for code development, analysis scripting, literature search, figure generation and drafting this report. ChatGPT also acted as an internal reviewer. Every reported number comes from the repository's analysis code and was reproduced by a separate recomputation script (`verify_p1_independent.py`, 0 mismatches). Cited works were checked against their arXiv or journal records. The author is responsible for the final content.
 
 ---

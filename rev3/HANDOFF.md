@@ -1,9 +1,155 @@
-# HANDOFF — Apart AI × Epistemics sprint (P1 + P2), state at 16:10 IST, 16 Nov 2026
+# HANDOFF — Apart AI × Epistemics sprint (P1 + P2), state at 16:10 IST, updated 16:25 IST, 16 Nov 2026
 
 Identical copy in both repos (`verification-under-pressure/rev3/HANDOFF.md`, `scope-of-trust/rev3/HANDOFF.md`).
 A new session should read this file first, then each project's `REVISION_3_SPEC.md` and `REPORT_DRAFT.md`.
 
 **Submission deadline: 18:30 IST, 16 Nov 2026.**
+
+## UPDATE 16:25 IST (new account). This section supersedes the status lines in §3–§5 below
+
+Sections §0–§2 (ground rules, repos, infrastructure) still apply unchanged.
+
+### U1. Run status (checked from summary.json and the logs, not estimated)
+
+| Run | Status |
+|---|---|
+| P1 `runs/p1_dev_eval_v2` (base, 24 items) | COMPLETE: 17,280 / 17,280 trials ok |
+| P1 `runs/p1_ext_v2` (ext, 36 items) | COMPLETE: 25,920 / 25,920 trials ok. The runner died at 53,279 / 53,280 calls when the old account's session ended. It was resumed at 16:14 and finished at 16:15. No duplicates. |
+| P2 `runs/p2_dev_eval_v1`, `runs/p2_ext_v1` (batch 1, 12 cases) | COMPLETE: 3,360 + 3,360 ok |
+| P2 `runs/p2_ba_v1`, `runs/p2_bb_v1`, `runs/p2_bc_v1` (batch 2, 3 × 8 cases) | LAUNCHED 16:15 (Terminal tabs "P2 ba/bb/bc run"), ETA about 16:25. Cases committed in b7c2279 before launch. 238 tests OK, and an offline dry run completed 4,480 / 4,480 per batch. The stimuli_dev/ext hashes are unchanged. |
+
+Raw-data backup, outside both repos and not in git:
+- Location: `/Users/divyansh/Documents/research_active/ai-epistemics/_backup_raw_2026-11-16/`
+- Contents: `p1_runs_v2_and_v1.tgz`, `p2_runs_batch1.tgz`, `SHA256SUMS.txt`, `SHA256SUMS_files.txt` (per-file hashes of journal / trials / responses / manifest / summary).
+- Batch 2 is added to the backup when it completes.
+- `runs/` is gitignored, so GitHub has none of the raw data.
+
+### U2. Analyses and figures that exist now
+
+- **P1:** `runs/analysis_base/`, `runs/analysis_ext/` and `runs/analysis_combined/`. Each has `analysis.json`, `analysis.md`, and `figures/` with e4, funnel, estimands, accuracy, lookup and validity figures in pdf/png/svg. All were generated at 16:16 from the v2 runs only.
+- **P1 combined headline (insistence; item t 95% CI, provisional):**
+  - E1 Δlookup:
+    - Qwen −49.7 pp [−52.3, −47.1]
+    - gpt-oss −10.0 [−12.5, −7.5]
+    - Kimi −5.8 [−8.7, −2.8]
+    - DeepSeek −1.3 [−2.0, −0.7]
+  - E2 Δaccuracy, supplied: within 2.4 pp for every model.
+  - E3 delivery effect: Qwen +25.6 [+23.4, +27.8]; gpt-oss +4.5; Kimi +5.1; DeepSeek −1.8.
+  - E4: Qwen −40.5 [−45.5, −35.5]; gpt-oss −4.7.
+  - Neutral optional lookup rate: DeepSeek 100%, gpt-oss 99%, Qwen 79.8%, **Kimi 16.8%** (a validity limit for Kimi's E1).
+  - Authority: mostly null; Qwen E1 +4.2, E4 +8.2.
+  - Base vs ext (Welch): no insistence difference excludes 0. The one exception is gpt-oss authority S2 (+7.4, secondary).
+- **P2:** `runs/p2_batch1_combined/` (analysis.json and figures). It was produced by the OLD analysis code, before the uncommitted secondary/denominator diff. It must be regenerated after the code review in WP-B.
+
+### U3. Uncommitted work left by the old account's sessions (preserve it; owners are named in U4)
+
+- **P1:** `sim_p1_coverage.py`, `SIM_P1_COVERAGE.md` and `sim_out/` are complete but untracked.
+- **P2, modified files:**
+  - `analyze_p2.py`: S1–S6 secondary family, plus the planned_keys-from-manifest denominator fix (lines ~97, ~176, ~658).
+  - `plot_p2.py`: V on the ladder, renumbered figures.
+  - `SIM_P2_ALLPAIRS.md`, `sim_p2_allpairs.py`, `sim_out/`.
+  - `REPORT_DRAFT.md`: partly filled with batch-1 numbers, 19 `[[...]]` placeholders left.
+- Tests pass on this state (238 OK, 1 skipped). None of it has been reviewed.
+
+### U4. Parallel work plan. Each work package (WP) has one owner, and nobody edits another WP's files
+
+All sessions share the same local checkouts. Do not use worktrees: the raw `runs/` exist only here.
+
+**Git rules for every session:**
+- `git add <explicit paths>` only. Never `git add -A`, `git add .` or anything under `runs/`.
+- Before every push, run `git pull --rebase`. If you hit an index.lock, wait and retry.
+- Short neutral commit messages ending with the Co-Authored-By line from §0.
+
+**Familiarise first (mandatory before editing anything).** Read, in full:
+1. This HANDOFF.
+2. `REVISION_3_SPEC.md`.
+3. `CONTRAST_LEDGER.csv`.
+4. The scoring spec (P2: `SCORING_SPEC.md`, `GOLD_LABELS.md`).
+5. The analysis code (`analyze_p*.py`, `p1v3/` or `p2v3/`).
+6. The relevant `analysis.md` outputs.
+7. `REPORT_DRAFT.md`.
+8. `git log --oneline -30`.
+
+Then post a short state-of-understanding message (10–15 lines: what the study tests, what the data show, what your WP must deliver, risks) before the first edit.
+
+These workstreams follow the reviewer's second handoff (A–F).
+
+**Data flow.** Analysis JSON/CSV is the single numerical source of truth, and it flows A/B → C → D/E.
+- When a stats workstream has verified numbers, it commits them and writes `rev3/review/P{1,2}_NUMBERS_READY.md`. The note gives the commit, the analysis dirs, and which numbers are final versus provisional.
+- C plots only from those analysis files.
+- D/E cite only those numbers. Until the note exists, they work on methods, related work, limitations and citations.
+
+| WS | Session | Owns (only these files; everything is under `rev3/`) | Deliverable |
+|---|---|---|---|
+| A | p1-stats | P1: `analyze_p1.py`, `p1v3/` analysis modules (`estimands.py`, `inference.py`), P1 tests except plot tests, `sim_p1_coverage.py`, `SIM_P1_COVERAGE.md`, `sim_out/`, `runs/analysis_*/analysis.{json,md}` and new CSV tables, `review/P1_NUMBERS_READY.md`, `review/REVIEW_PACKET_P1_STATS.md` | Run WS-A tasks 1–11 of the reviewer's handoff. The coverage sim (complete, untracked) recommends the family-clustered t interval (df = F−1) or a family-level sign-flip test with Holm, and rejects the item-level sign-flip (type-I error 0.10–0.22) and the bootstrap. Apply it as a reported, labelled sensitivity. The prespecified-method decision belongs to the PI, so do not silently switch the primary. Check Kimi's tool use as choice versus capability: does it ever call the tool, and are the calls well-formed? |
+| B | p2-stats | P2: `analyze_p2.py`, `p2v3/stats.py` (and other non-plot analysis modules), P2 tests except `tests/test_plot_p2.py`, `sim_p2_allpairs.py`, `SIM_P2_ALLPAIRS.md`, `sim_out/`, analysis dirs under `runs/` (`p2_batch1_combined`, `p2_<batch>_analysis`, `p2_all_batches`) except their `figures/`, `review/P2_NUMBERS_READY.md`, `review/REVIEW_PACKET_P2_STATS.md` | Run WS-B tasks 1–15. Review and commit the uncommitted `analyze_p2.py` diff: S1–S6 and the manifest denominator. Add regression tests for a wholly absent case and a wholly absent cell. Produce per-batch, pooled and between-batch results (spec §7a) once batch-2 `summary.json` shows complete. Give the zero-event bound at the case level. Extract V-cell response reasons for a qualitative check. Sim: keep the all-pairs Tango-c-cc interval (calibrated by simulation only). P4 stays descriptive at this case count. |
+| C | plots | P1 `plot_p1.py`; P2 `plot_p2.py`, `tests/test_plot_p2.py`, new P1 plot tests; every `figures/` subdir under the analysis dirs; `review/FIGURES_READY.md` | Run WS-C. Palette: #0072B2, #D55E00, #009E73, #CC79A7, with distinct markers, fixed model → colour across both papers. Three main figures per paper, exactly as the reviewer specified. PNG/PDF/SVG. Add tests that plotted values equal the analysis-JSON values. Never show a missing value as 0, and never use synthetic data in a paper figure. |
+| D | p1-report | P1: `REPORT_DRAFT.md`, `report/`, `review/REVIEW_PACKET_P1.md` | Run WS-D. Fill all 41 `[[...]]` placeholders only from P1_NUMBERS_READY/FIGURES_READY. The story: the decision to verify, versus retrieval, versus use of supplied evidence, crossed with assertion correctness. Check every citation. Write a paste-ready `report/REPORT_P1_FINAL.md`. |
+| E | p2-report | P2: `REPORT_DRAFT.md` (keep its uncommitted progress), `report/`, `review/REVIEW_PACKET_P2.md` | Run WS-E. Lead with the null primary result. Discuss the floor as scope discrimination versus task explicitness. V is exploratory with a contested gold label. Keep practice / outcome / welfare / cause distinct. Write a paste-ready `report/REPORT_P2_FINAL.md`. |
+| F | main (orchestrator, this account's first session) | `HANDOFF.md` (both repos), `results/` (both repos), `_backup_raw_2026-11-16/`, batch-2 runs | Run WS-F. Back up and hash the raw data. Publish a tracked, sanitized `rev3/results/` (analysis json/md/csv, figures, manifests, raw SHA-256, a secrets scan). Run the final audit: no placeholders, references real, links open. Route ChatGPT reviews to the right session. |
+
+**No two sessions edit the same file.** If a WS needs a change in another WS's file, it writes the request into `review/REQUESTS.md` (append only, prefixed `[from X → to Y]`) and tells the user.
+
+### U5. Claim boundaries every report must respect (from the reviewer)
+
+- Every case and item is builder-written development data. None of it is confirmatory, and none of it is independently validated.
+- Repeats are not independent cases. 5 × 12 is not 60 cases.
+- **P2 zero events:**
+  - Give the case-level bound as the headline. With n cases and zero events in every case, the rule of three gives roughly 3/n: 25% at 12 cases, about 8% at 36.
+  - A trial-level bound (≈4.9% with 60 trials per model per cell) may appear only if it is labelled as assuming independent trials.
+  - A [0, 0] case-t interval is degenerate. It does not show precision.
+- **P4 is not shown noninferior.** No margin is fixed, so 100% vs 100% is "no decision", and the provisional lower bound (−0.30) would fail any reasonable margin.
+- **V is exploratory.** Its gold label is contested (spec §8.6). Call it "marked established after an unscoped stamp", not "error", unless the response reasons support that. It is not a confirmed primary hypothesis.
+- **Nulls stay nulls.** No equivalence claim from a nonsignificant result, and no claim that models "cannot" make the error.
+- **P1:** no SESOI is fixed, so there are no equivalence statements. Kimi's low neutral lookup rate (16.8%) limits its E1. Intervals are provisional until the coverage sim's method choice is applied.
+- **Batch 2 (P2)** was commissioned after batch 1 had run but before its contrasts were analysed (spec §7a, commit c22ff29). Report it as later development batches, not as replication.
+- **Never fill in** expert verdicts, author names, affiliations or approvals.
+
+### U5b. Claims in the current drafts that are UNSAFE until fixed (found at 16:20)
+
+- **P2 abstract and Table 2:** "one-sided 95% upper bound 4.9% per model, treating trials as independent". This treats 60 repeats as independent. Replace it with the case-level bound as the headline.
+- **P2 Table 2, P4 column:** "0.000; LB −0.30" is correct as a number, but the text must say "no decision; not noninferior", never "noninferior".
+- **P2 batch-1 figures** in `runs/p2_batch1_combined/figures` came from the pre-review code. Regenerate them.
+- **P1 intervals:**
+  - The item-level t and sign-flip intervals are anti-conservative under family heterogeneity (sim: coverage down to 0.84; sign-flip type-I error up to 0.22).
+  - Every P1 interval stays "provisional". The family-t interval goes beside it.
+  - Small effects that exclude 0 only on item-level intervals get flagged, e.g. DeepSeek E4 +2.5 [+0.4, +4.6], whose CR1 interval is [−0.0, +5.1].
+- **P1 ext figures** were produced by the current `plot_p1.py`, but WS-C has not checked them against the tables.
+
+### U6. ChatGPT as strict reviewer (no self-approval)
+
+Each WP writes `rev3/review/REVIEW_PACKET_<WP>.md` and pushes it. The packet contains:
+1. Commit hashes and GitHub links for every change.
+2. A claim → source table: each number in the report, with its file, JSON key and value.
+3. Every deviation from the spec or ledger.
+4. Known weaknesses.
+5. Specific questions for the reviewer.
+
+The user pastes the packet (and the report) into ChatGPT, then pastes ChatGPT's verdict back into the same session. A WP is done only after the review's blocking points are fixed or explicitly rebutted in writing. ChatGPT has the longer project history, so where it conflicts with a session's own judgement on scientific framing, flag the conflict to the user rather than silently overriding ChatGPT.
+
+### U7. Needs the user
+
+1. **Google Docs.**
+   - The Docs connector does not respond, and the Drive connector "requires additional permissions".
+   - Either reconnect Google Drive with write access in the app's connector settings, or download each Doc (File → Download → Markdown) into `rev3/report/gdoc_current.md` in each repo, so the report sessions can reconcile ChatGPT's earlier edits.
+   - Fallback for the final copy: in Google Docs, Tools → Preferences → enable Markdown, then Edit → Paste from Markdown with `report/REPORT_P*_FINAL.md`.
+2. SESOIs and the P4 margin. Otherwise reports say "no decision".
+3. After the batch-2 runs finish (about 16:25), revoke and rotate the OpenRouter key and clean `~/.zsh_history`.
+
+### U8. Timeline to the 18:30 IST deadline
+
+| Time | Milestone |
+|---|---|
+| 16:45 | Every WP has posted its understanding message |
+| 17:15 | P2 pooled numbers ready |
+| 17:30 | Report numbers frozen; review packets to ChatGPT |
+| 18:00 | ChatGPT fixes applied; final copies in the Google Docs |
+| 18:15 | Final link check |
+| 18:30 | Submit |
+
+If batch 2 is late, the P2 report goes out on batch 1 and states that batch 2 was incomplete (spec §7a rule).
+
+---
 
 ## 0. Ground rules that must survive the handoff
 

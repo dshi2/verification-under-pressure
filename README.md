@@ -1,7 +1,7 @@
 # Verification Under Pressure
 ### Optional versus supplied record evidence under correct and incorrect user insistence
 
-**Drishti Sharma · AI × Epistemics Research Sprint · November 2026**
+**Drishti Sharma · November 2026**
 
 [Research report (Markdown)](rev3/report/REPORT_P1_FINAL.md) · [Results and independent recomputation](rev3/results/) · [Experiment specification](rev3/REVISION_3_SPEC.md) · [Source code](rev3/) · [Companion study: The Scope of Trust](https://github.com/dshi2/scope-of-trust)
 

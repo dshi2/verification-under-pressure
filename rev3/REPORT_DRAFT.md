@@ -2,7 +2,7 @@
 
 **Authors:** _[to be added by the authors]_
 **Affiliations:** _[to be added by the authors]_
-**Track:** Apart AI × Epistemics sprint, Track 1 (Model Epistemics & Decision-Making Evals)
+**With** Apart Research. Research conducted at the AI × Epistemics Research Sprint, November 2026 (Track 1: Model Epistemics & Decision-Making Evals).
 
 > **Draft status (workstream D; remove before submission).**
 > - `[[N: …]]` placeholders are filled only from `rev3/review/P1_NUMBERS_READY.md` and the analysis files it names.
@@ -13,14 +13,14 @@
 
 ## Abstract
 
-Sycophancy evaluations usually ask whether a model abandons a correct answer when a user pushes back. For assistants that can consult authoritative records, a more useful question is *where in the verification workflow* pressure acts:
+Language-model assistants meet confident user assertions that conflict with records. A model can correctly use evidence when it is supplied, yet fail to obtain it voluntarily; conversely, it can seek evidence without resisting a misleading claim. Sycophancy evaluations usually ask only whether a model abandons a correct answer when a user pushes back. We ask *where in the verification workflow* pressure acts:
 - on the choice to look the record up;
 - on retrieving the right record;
 - on using a record that is already in context;
 
 and whether the answer depends on whether the user is right.
 
-We ran a fully randomized two-turn experiment on binary registry-record questions. It crosses four factors, giving 36 cells that share one journaled first answer:
+We ran a fully randomized two-turn experiment on binary registry-record questions. It crosses four factors, giving 36 cells per item. The initial answer is generated once and shared across all follow-up branches, which isolates the turn-2 interventions. The four factors are:
 - the snapshot version of a dated secondary source;
 - assigned user correctness (right or wrong);
 - pressure (neutral assertion, insistence or irrelevant authority);
@@ -28,17 +28,19 @@ We ran a fully randomized two-turn experiment on binary registry-record question
 
 We evaluated four open-weight models (gpt-oss-120b, DeepSeek-V3.2, Qwen3-235B-A22B-Instruct-2507, Kimi-K2-Instruct-0905) on [[N: items / families / trials]] builder-written items with five repeats. [[N: 2–3 sentences, model-specific first: E1 lookup-attempt changes per model; E2 range; E3/E4 for the models where they are non-trivial; Kimi's low neutral lookup rate as a validity limit.]]
 
-This is a development-case evaluation. Items are builder-written, pressure paraphrases are unrated, intervals are provisional, and no smallest effect of interest is fixed. The results therefore describe these cases and decide no hypothesis.
+This is a development-case evaluation. Items are researcher-authored, pressure paraphrases are unrated, intervals are provisional, and no smallest effect of interest is fixed. The results therefore describe these cases and decide no hypothesis. Independent validation and confirmatory inference are separate, future stages.
 
 ---
 
 ## 1. Introduction
 
+Correctly responding to available evidence and choosing to obtain evidence are different safety-relevant behaviours. A user who insists on a false value may suppress verification, even when the model would use an objective record if shown it.
+
 LLMs shift answers toward user-stated views and abandon correct answers when challenged (§2). Most of that evidence comes from settings where the model either has nothing to consult or is handed everything in the prompt. Deployed assistants increasingly work inside workflows that *can* consult authoritative records, and their designers choose **who initiates verification**:
 - **Optional lookup.** The model has a tool that returns the record and decides whether to call it.
 - **Supplied evidence.** The workflow retrieves the record and places it in context automatically.
 
-The two designs can deliver byte-identical evidence. Under optional lookup, though, pressure has more places to act. We separate four of them:
+The two designs can deliver byte-identical evidence, so comparing them isolates an operational delivery choice: does making the same record available by optional lookup, instead of supplying it, change vulnerability to user pressure? Under optional lookup, pressure has more places to act. We separate four of them:
 
 1. **Choosing to verify.** Does insistence change whether the model attempts a lookup? (E1)
 2. **Obtaining the relevant record.** When the model looks, does it retrieve the right record? (E1b, a descriptive decomposition of E1)
@@ -171,7 +173,7 @@ We used the pinned providers' default sampling configurations, with reasoning en
 - No sampling parameter is sent. The only fields set are `max_tokens` = 8192 and, for DeepSeek-V3.2, `reasoning.enabled = true`.
 - The API does not return the sampling values a provider applied.
 - Settings are identical across conditions within a model.
-- There are five repeats per item × cell. The repeat index is not a provider seed, and hosted endpoints are not deterministic.
+- There are five repeated generations per item × cell, nested within the item, so response-level independence is not assumed. The repeat index is not a provider seed, and hosted endpoints are not deterministic.
 
 **Serving change before any analysis.** The first live run was stopped after about three minutes. The originally pinned DeepSeek-V3.2 endpoint could not serve the supplied route: OpenRouter's tool-compatibility filter rejected requests that replay a tool call with `tool_choice: "none"`. Both runs were restarted from scratch with DeepSeek-V3.2 on a different provider, and all other settings unchanged. The stopped runs are kept on disk and not analysed.
 
@@ -325,7 +327,7 @@ E3 is intention-to-treat and does not condition on who checked, so we make no me
 
 ### Limitations
 
-- **Development cases only.** All items are builder-written from one template, by one builder, and visible in the repository. Results describe these cases, not a population of record tasks.
+- **Development cases only.** All items are builder-written from one template, by one builder, and visible in the repository. Synthetic binary registries may not represent complex real-world record workflows. Results describe these cases, not a population of record tasks.
 - **Unvalidated stimuli.** Paraphrases are unrated. An insistence effect may partly reflect wording other than pressure (length, repetition), and the authority cue may not be perceived as authority.
 - **Provisional inference.**
   - Item-level intervals under-cover when families differ (§3.8).
@@ -346,7 +348,7 @@ E3 is intention-to-treat and does not condition on who checked, so we make no me
   - DeepSeek-V3.2 had reasoning enabled by override, and its provider was changed before analysis.
   - Other providers, settings or closed models may behave differently.
 - **Measurement.**
-  - E1 measures attempts. E2–E4 measure final-answer correctness, not internal evidence use.
+  - E1 measures observable tool attempts, not latent intent. E2–E4 measure final-answer correctness, not internal evidence use.
   - We did not analyse reasoning traces, and verbal explanations need not reflect the underlying process (Turpin et al., 2023).
 - **Two turns, one pressure message.** There is no escalation and no multi-turn persistence.
 - **Ethics and dual use.** Fictional records, no human participants, aggregate behaviour on synthetic tasks. No new attack technique is released.

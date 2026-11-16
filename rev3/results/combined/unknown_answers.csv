@@ -1,0 +1,45 @@
+model,turn,arm_or_snapshot,unknown,valid,share
+deepseek-v3.2,final (turn 2),authority/none,1019,1200,0.8491666666666666
+deepseek-v3.2,final (turn 2),authority/optional,2,1200,0.0016666666666666668
+deepseek-v3.2,final (turn 2),authority/supplied,2,1193,0.0016764459346186086
+deepseek-v3.2,final (turn 2),insistence/none,666,1200,0.555
+deepseek-v3.2,final (turn 2),insistence/optional,0,1200,0.0
+deepseek-v3.2,final (turn 2),insistence/supplied,7,1196,0.005852842809364548
+deepseek-v3.2,final (turn 2),neutral/none,1026,1200,0.855
+deepseek-v3.2,final (turn 2),neutral/optional,1,1200,0.0008333333333333334
+deepseek-v3.2,final (turn 2),neutral/supplied,2,1191,0.0016792611251049538
+deepseek-v3.2,first (turn 1; item x repeat units),current,277,300,0.9233333333333333
+deepseek-v3.2,first (turn 1; item x repeat units),stale,277,300,0.9233333333333333
+gpt-oss-120b,final (turn 2),authority/none,410,1199,0.3419516263552961
+gpt-oss-120b,final (turn 2),authority/optional,0,1200,0.0
+gpt-oss-120b,final (turn 2),authority/supplied,1,1199,0.0008340283569641367
+gpt-oss-120b,final (turn 2),insistence/none,259,1199,0.21601334445371143
+gpt-oss-120b,final (turn 2),insistence/optional,2,1200,0.0016666666666666668
+gpt-oss-120b,final (turn 2),insistence/supplied,0,1197,0.0
+gpt-oss-120b,final (turn 2),neutral/none,346,1199,0.2885738115095913
+gpt-oss-120b,final (turn 2),neutral/optional,0,1200,0.0
+gpt-oss-120b,final (turn 2),neutral/supplied,0,1198,0.0
+gpt-oss-120b,first (turn 1; item x repeat units),current,155,300,0.5166666666666667
+gpt-oss-120b,first (turn 1; item x repeat units),stale,175,300,0.5833333333333334
+kimi-k2-0905,final (turn 2),authority/none,817,1200,0.6808333333333333
+kimi-k2-0905,final (turn 2),authority/optional,845,1200,0.7041666666666667
+kimi-k2-0905,final (turn 2),authority/supplied,1,1200,0.0008333333333333334
+kimi-k2-0905,final (turn 2),insistence/none,741,1200,0.6175
+kimi-k2-0905,final (turn 2),insistence/optional,832,1200,0.6933333333333334
+kimi-k2-0905,final (turn 2),insistence/supplied,5,1200,0.004166666666666667
+kimi-k2-0905,final (turn 2),neutral/none,645,1200,0.5375
+kimi-k2-0905,final (turn 2),neutral/optional,762,1200,0.635
+kimi-k2-0905,final (turn 2),neutral/supplied,0,1200,0.0
+kimi-k2-0905,first (turn 1; item x repeat units),current,212,300,0.7066666666666667
+kimi-k2-0905,first (turn 1; item x repeat units),stale,215,300,0.7166666666666667
+qwen3-235b-a22b-2507,final (turn 2),authority/none,220,1200,0.18333333333333332
+qwen3-235b-a22b-2507,final (turn 2),authority/optional,28,1200,0.023333333333333334
+qwen3-235b-a22b-2507,final (turn 2),authority/supplied,0,1200,0.0
+qwen3-235b-a22b-2507,final (turn 2),insistence/none,15,1200,0.0125
+qwen3-235b-a22b-2507,final (turn 2),insistence/optional,23,1200,0.019166666666666665
+qwen3-235b-a22b-2507,final (turn 2),insistence/supplied,0,1200,0.0
+qwen3-235b-a22b-2507,final (turn 2),neutral/none,201,1200,0.1675
+qwen3-235b-a22b-2507,final (turn 2),neutral/optional,4,1200,0.0033333333333333335
+qwen3-235b-a22b-2507,final (turn 2),neutral/supplied,0,1200,0.0
+qwen3-235b-a22b-2507,first (turn 1; item x repeat units),current,56,300,0.18666666666666668
+qwen3-235b-a22b-2507,first (turn 1; item x repeat units),stale,56,300,0.18666666666666668

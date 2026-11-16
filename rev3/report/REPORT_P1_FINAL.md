@@ -23,7 +23,7 @@ We ran a fully randomized two-turn experiment on binary registry-record question
 
 We evaluated four open-weight models (gpt-oss-120b, DeepSeek-V3.2, Qwen3-235B-A22B-Instruct-2507, Kimi-K2-Instruct-0905) on 60 builder-written items in 12 record families, with five repeats (43,200 trials, all completed; 29 invalid final answers). Insistence lowered optional lookup attempts in every model, by 1.3 pp (DeepSeek-V3.2) to 49.7 pp (Qwen3-235B). With the record supplied, it changed accuracy by at most 2.4 pp. For Qwen3-235B and gpt-oss-120b, supplying the record instead of offering it reduced the insistence penalty on accuracy (E3 +25.6 and +4.5 pp). That benefit was larger when the user was wrong than when the user was right (E4 −40.5 and −4.7 pp), which is same-sign amplification, not reversal. All of these exclude zero under both item- and family-clustered intervals. DeepSeek-V3.2 looked up the record in essentially every trial and showed a small negative E3 (−1.8 pp). Kimi-K2 used the tool in only 16.8% of neutral optional trials, so its lookup contrasts rest on a low base rate.
 
-This is a development-case evaluation. Items are researcher-authored, pressure paraphrases are unrated, intervals are provisional, and no smallest effect of interest is fixed. The results therefore describe these cases and decide no hypothesis. Independent validation and confirmatory inference are separate, future stages.
+This is a development-case evaluation. Items are researcher-authored, pressure paraphrases are unrated, intervals are provisional, and no smallest effect of interest is fixed. The results test the stated contrasts within these record tasks. Whether they generalise to independently constructed tasks, and confirmatory inference with fixed thresholds, are separate future stages.
 
 ---
 
@@ -63,7 +63,7 @@ A *reversal* means D(right) and D(wrong) have opposite signs. A same-sign differ
 **Contributions.**
 1. **Design.** A randomized crossing of evidence delivery (optional vs. supplied, with identical tool results), pressure and *assigned* user correctness. This identifies the delivery × pressure × correctness contrast (E4) on manipulated factors, not on which first answers happened to be wrong.
 2. **Workflow-level measurement.** Lookup attempt, relevant retrieval, use of supplied evidence and validity failures are recorded as separate outcomes, with sign-aware assigned-denominator bounds. An invalid output is never scored as "did not check".
-3. **A development-case evaluation of four open-weight models.** It is reported per model, with the item-level interval shown beside a family-clustered sensitivity interval, as chosen by a coverage simulation of this estimator. Its purpose is to shape a confirmatory design.
+3. **A development-case evaluation of four open-weight models.** It is reported per model. Family-clustered intervals are the main intervals, a disclosed change prompted by a coverage simulation of this estimator, and the prespecified item-level interval is shown beside them.
 
 ---
 
@@ -230,8 +230,8 @@ Results are reported **per model**. No pooling rule was prespecified, so we do n
 
 For each model × estimand we report:
 - the point estimate;
-- a 95% t interval over the d_i (df = items − 1), labelled **provisional**;
-- a **family-clustered** 95% interval for the same item-weighted mean (CR1 variance with families as clusters, t with families − 1 df), as a sensitivity analysis;
+- a **family-clustered** 95% interval for the item-weighted mean (CR1 variance with families as clusters, t with families − 1 df). This is the main interval (see the deviation below);
+- the prespecified 95% t interval over the d_i (df = items − 1), labelled **provisional**;
 - a t-test p-value, Holm-adjusted (Holm, 1979) across E1–E4 within each model × pressure contrast, with a CR1 family-clustered t-test (df = 11) and an exact family-level sign-flip test (12 families; smallest attainable p = 0.00049) as sensitivity tests, each Holm-adjusted the same way;
 - the assigned-denominator bounds (in `analysis.json`).
 
@@ -244,7 +244,11 @@ A zero-width interval, which arises when all d_i are equal, is flagged as degene
 
 With 120 items in 12 families, the item t interval covered S2 at 0.84–0.91 and E1 at 0.88–0.91. The family-clustered t interval stayed between 0.918 and 0.99 across all 55 scenarios, informative missingness aside. The item-level sign-flip test had a type-I error of 0.10–0.22 under family heterogeneity, so we do not report it.
 
-The confirmatory interval method is a decision for the investigators and has not been taken. We therefore flag every contrast that excludes zero on the item interval but not on the family-clustered one.
+**Deviation from the analysis plan (disclosed).** The plan prespecified the item-level t interval and t-test.
+- Because the coverage simulation showed that the item interval under-covers under family heterogeneity, we report the family-clustered CR1 interval as the main interval and base claims on it.
+- The prespecified item interval is shown beside it for transparency.
+- This change was made after the data were collected and both intervals had been computed. It is therefore a disclosed deviation, not a prespecified choice, and the confirmatory method remains to be fixed.
+- It changes no conclusion that holds under both intervals. It only demotes the contrasts that exclude zero on the item interval alone, which are flagged ⚑ throughout.
 
 **No equivalence claims.** No smallest effect size of interest (SESOI) has been fixed. We therefore make no equivalence or noninferiority statements (Lakens, 2017): "includes zero" means only that. A small estimate with a narrow interval is described by its interval, not as "no effect". The spec's provisional E4 precision floor (95% half-width ≤ 7.5 percentage points) is reported descriptively.
 
@@ -279,29 +283,29 @@ Turn-1 answers were often `unknown`: DeepSeek 92%, Kimi 71%, gpt-oss 52–58% (b
 _[Figure 1 pending: E1–E4 per model, insistence vs. neutral, family-clustered intervals as the main line.]_
 
 **Table 3. Primary contrasts per model (insistence − neutral, pp; n = 60 items, 12 families).**
-- *Items* = 95% CI, items as clusters (t, df = 59; provisional). It describes the sampled record families, and our coverage simulation shows it can under-cover for new families when families differ.
-- *Families* = 95% CI, families as clusters (CR1, t with df = 11; sensitivity). This is the interval the simulation recommends for claims beyond the sampled families.
+- *Families (main)* = 95% CI, families as clusters (CR1, t with df = 11). This is the interval our coverage simulation recommends for claims beyond the sampled families.
+- *Items (prespecified)* = 95% CI, items as clusters (t, df = 59; provisional). It describes the sampled record families, and it can under-cover for new families when families differ.
 - *Holm p* = two-sided t-test over items / CR1 family t-test, each Holm-adjusted across E1–E4 within model (provisional).
-- ⚑ = excludes 0 under the item interval only.
+- ⚑ = excludes 0 under the item interval only, so not under the main interval.
 
-| Model | Contrast | Estimate | Items (t) | Families (CR1) | Holm p (t / CR1) |
+| Model | Contrast | Estimate | Families (CR1, main) | Items (t, prespecified) | Holm p (CR1 / t) |
 |---|---|---|---|---|---|
-| DeepSeek-V3.2 | E1 | −1.3 | [−2.0, −0.7] | [−2.2, −0.4] | .00028 / .016 |
-| | E2 | −2.4 | [−3.7, −1.2] | [−3.6, −1.3] | .00075 / .0027 |
-| | E3 | −1.8 | [−3.0, −0.5] | [−2.7, −0.9] | .013 / .0039 |
-| | E4 | +2.5 ⚑ | [+0.4, +4.6] | [−0.0, +5.1] | .019 / .052 |
-| gpt-oss-120b | E1 | −10.0 | [−12.5, −7.5] | [−15.1, −4.9] | 2e-10 / .0047 |
-| | E2 | −0.4 | [−0.8, +0.0] | [−1.1, +0.3] | .058 / .21 |
-| | E3 | +4.5 | [+2.4, +6.6] | [+1.3, +7.7] | .00016 / .022 |
-| | E4 | −4.7 | [−7.7, −1.7] | [−7.7, −1.6] | .0055 / .020 |
-| Kimi-K2-0905 | E1 | −5.8 | [−8.7, −2.8] | [−10.3, −1.2] | .00095 / .071 |
-| | E2 | −0.4 ⚑ | [−0.8, −0.1] | [−0.9, +0.1] | .048 / .19 |
-| | E3 | +5.1 ⚑ | [+1.5, +8.7] | [−0.4, +10.5] | .020 / .19 |
-| | E4 | +1.5 | [−4.5, +7.5] | [−6.1, +9.1] | .62 / .67 |
-| Qwen3-235B-2507 | E1 | −49.7 | [−52.3, −47.1] | [−54.0, −45.4] | <1e-15 / 1.5e-10 |
-| | E2 | −0.2 | [−0.4, +0.1] | [−0.5, +0.2] | .16 / .35 |
-| | E3 | +25.6 | [+23.4, +27.8] | [+22.8, +28.4] | <1e-15 / 1.6e-9 |
-| | E4 | −40.5 | [−45.5, −35.5] | [−47.4, −33.6] | <1e-15 / 1.1e-7 |
+| DeepSeek-V3.2 | E1 | −1.3 | [−2.2, −0.4] | [−2.0, −0.7] | .016 / .00028 |
+| | E2 | −2.4 | [−3.6, −1.3] | [−3.7, −1.2] | .0027 / .00075 |
+| | E3 | −1.8 | [−2.7, −0.9] | [−3.0, −0.5] | .0039 / .013 |
+| | E4 | +2.5 ⚑ | [−0.0, +5.1] | [+0.4, +4.6] | .052 / .019 |
+| gpt-oss-120b | E1 | −10.0 | [−15.1, −4.9] | [−12.5, −7.5] | .0047 / 2e-10 |
+| | E2 | −0.4 | [−1.1, +0.3] | [−0.8, +0.0] | .21 / .058 |
+| | E3 | +4.5 | [+1.3, +7.7] | [+2.4, +6.6] | .022 / .00016 |
+| | E4 | −4.7 | [−7.7, −1.6] | [−7.7, −1.7] | .020 / .0055 |
+| Kimi-K2-0905 | E1 | −5.8 | [−10.3, −1.2] | [−8.7, −2.8] | .071 / .00095 |
+| | E2 | −0.4 ⚑ | [−0.9, +0.1] | [−0.8, −0.1] | .19 / .048 |
+| | E3 | +5.1 ⚑ | [−0.4, +10.5] | [+1.5, +8.7] | .19 / .020 |
+| | E4 | +1.5 | [−6.1, +9.1] | [−4.5, +7.5] | .67 / .62 |
+| Qwen3-235B-2507 | E1 | −49.7 | [−54.0, −45.4] | [−52.3, −47.1] | 1.5e-10 / <1e-15 |
+| | E2 | −0.2 | [−0.5, +0.2] | [−0.4, +0.1] | .35 / .16 |
+| | E3 | +25.6 | [+22.8, +28.4] | [+23.4, +27.8] | 1.6e-9 / <1e-15 |
+| | E4 | −40.5 | [−47.4, −33.6] | [−45.5, −35.5] | 1.1e-7 / <1e-15 |
 
 Exact family sign-flip p-values and assigned-denominator bounds are in `analysis.json`. Because only 29 outcomes are missing, the bounds are narrow.
 
@@ -315,7 +319,20 @@ _[Figure 2 pending: optional-route lookup attempted, relevant lookup and final c
 - **Obtaining the relevant record (E1b).** When the models looked, they retrieved the right record. E1b equals E1 for gpt-oss, Kimi and Qwen, and is −1.2 vs. −1.3 pp for DeepSeek, where 3 attempted trials lacked the correct id.
   - Descriptively, a trial with a lookup attempt almost always ended with the record's value: DeepSeek 3,581 of 3,584, gpt-oss 3,433/3,433, Kimi 512/512, Qwen 2,326/2,326. The optional-route accuracy penalty therefore sits in trials without an attempt.
   - For example, with a wrong assertion Qwen attempted a lookup in 481/600 neutral trials (484 correct) but in only 177/600 insistence trials (207 correct).
-  - This conditions on a post-treatment choice, so it is descriptive, not mediation.
+  - This conditions on a post-treatment choice, so it is descriptive. It is consistent with insistence acting through skipped lookups, but the design does not identify mediation.
+
+**Table 3b. Optional-route workflow by user correctness (trial counts, combined set; neutral → insistence).** Each cell has 600 trials (60 items × 2 snapshots × 5 repeats). Lookup denominators are completed trials, and accuracy denominators are valid final answers. These are descriptive counts; the inferential unit remains the item (Table 3).
+
+| Model | User | Optional: lookup attempted | Optional: correct | Supplied: correct |
+|---|---|---|---|---|
+| DeepSeek-V3.2 | right | 600/600 → 593/600 | 599/600 → 600/600 | 598/599 → 596/599 |
+| | wrong | 600/600 → 591/600 | 600/600 → 591/600 | 584/592 → 562/597 |
+| gpt-oss-120b | right | 599/600 → 537/600 | 600/600 → 585/600 | 597/598 → 595/598 |
+| | wrong | 589/600 → 531/600 | 589/600 → 545/600 | 600/600 → 596/599 |
+| Kimi-K2-0905 | right | 111/600 → 59/600 | 176/600 → 137/600 | 600/600 → 596/600 |
+| | wrong | 90/600 → 73/600 | 142/600 → 115/600 | 600/600 → 599/600 |
+| Qwen3-235B-2507 | right | 476/600 → 184/600 | 597/600 → 565/600 | 600/600 → 600/600 |
+| | wrong | 481/600 → 177/600 | 484/600 → 207/600 | 600/600 → 598/600 |
 - **Using supplied evidence (E2).** With the record already in context, insistence changed accuracy little: estimates ranged from −2.4 pp (DeepSeek) to −0.2 pp (Qwen). Only DeepSeek's excludes 0 under both intervals. Its penalty is concentrated in wrong assertions (−4.5 pp, vs. −0.3 pp for right). Neutral adoption was 99.2–100%, so these estimates sit near the ceiling. A small estimate is a statement about size, not "no effect".
 
 ### 4.4 Does the delivery effect depend on user correctness? (E3, E4)
@@ -427,14 +444,14 @@ E3 is intention-to-treat and does not condition on who checked, so we make no me
 
 We separated where user insistence acts in a record-verification workflow: choosing to look, retrieving the right record, using a supplied record, and whether the user is right. Across four open-weight models, insistence reduced optional lookups (by 1.3–49.7 pp) far more than it changed use of a supplied record (at most 2.4 pp). For the two models whose lookups were not at ceiling, supplying the record protected mostly against wrong insistence: same-sign amplification, with no reversal.
 
-Because items are builder-written, paraphrases unrated and intervals provisional, these results shape a confirmatory design. They do not test its hypotheses.
+These hypothesis-driven development results provide evidence for pressure-dependent changes in verification behaviour within the tested record tasks. Their generalisability, and the calibration of confirmatory inference, require independent validation: independently written items, rated pressure wording and fixed thresholds.
 
 ---
 
 ## Code and Data
 
 - **Repository:** https://github.com/dshi2/verification-under-pressure, branch `p1-revision-3`, analysis code at commit `8b6af31`.
-- **Published results:** `rev3/results/` (pending publication of the sanitized analysis outputs).
+- **Published results:** `rev3/results/`, containing the analysis outputs (`combined/`, `base/`, `ext/`), the independent recomputation (`audit/`) and the SHA-256 hashes of the raw-data archives.
 - **Raw data:** the raw journals and trial files are not in git. They are archived with SHA-256 hashes.
 
 Key files:
@@ -623,7 +640,7 @@ We used LLM assistants (Anthropic's Claude and OpenAI's ChatGPT) for code develo
 
 ### E. Secondary contrasts and robustness
 
-The full tables for every estimand, pressure and interval type, the funnel counts, the `unknown` shares and the base-vs-extension check are in `runs/analysis_combined/`: `contrasts.csv`, `interaction.csv`, `funnel.csv`, `validity.csv`, `unknown_answers.csv` and `batches.csv`. They will be published in `rev3/results/`. _[Validity figure pending.]_
+The full tables for every estimand, pressure and interval type, the funnel counts, the `unknown` shares and the base-vs-extension check are in `runs/analysis_combined/`: `contrasts.csv`, `interaction.csv`, `funnel.csv`, `validity.csv`, `unknown_answers.csv` and `batches.csv`. They are published in `rev3/results/combined/`. _[Validity figure pending.]_
 
 ### F. Software validation and coverage simulation
 

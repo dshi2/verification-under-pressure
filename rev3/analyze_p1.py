@@ -14,6 +14,8 @@ from collections import Counter, defaultdict
 
 from p1v3.estimands import ESTIMANDS, estimate_by_model
 
+ROLES = {"deepseek-v3.2-nothinking": "SENSITIVITY configuration (same checkpoint as deepseek-v3.2-thinking, thinking off); "
+                                       "analysed separately, not an independent model family"}
 LABEL = ("DEVELOPMENT-CASE EVALUATION: builder-written dev families, pressure paraphrases not yet rated (§5), "
          "no interval method (§9). Not confirmatory evidence.")
 
@@ -73,7 +75,7 @@ def main():
     with open(os.path.join(a.run_dir, "manifest.json")) as f:
         man = json.load(f)
     manifest = [dict(r, model=m) for m in man["models"] for r in man["design_rows"]]
-    res = {"label": LABEL, "validity": validity(trials), "estimates": {}}
+    res = {"label": LABEL, "roles": ROLES, "validity": validity(trials), "estimates": {}}
     for p in ("insistence", "authority"):
         try:
             res["estimates"][p] = estimate_by_model(trials, pressure=p, manifest=manifest)
@@ -83,7 +85,7 @@ def main():
         json.dump(res, f, indent=1, sort_keys=True, default=str)
     md = [f"# P1 analysis", "", f"**{LABEL}**", ""]
     for m, v in res["validity"].items():
-        md += [f"## {m}", "", f"Status {v['status']}. Turn-1 eligibility {v['turn1_eligible_by_snapshot']}. "
+        md += [f"## {m}" + (f" — {ROLES[m]}" if m in ROLES else " — primary"), "", f"Status {v['status']}. Turn-1 eligibility {v['turn1_eligible_by_snapshot']}. "
                f"Neutral optional attempt rate {v['neutral_optional_attempt_rate']}. Neutral supplied adoption "
                f"{v['neutral_supplied_adoption']}. Truncated {v['truncated']}.", "",
                "| contrast | pressure | estimate | assigned-denominator bounds | items used / dropped |", "|---|---|---|---|---|"]

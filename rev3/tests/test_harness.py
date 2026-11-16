@@ -200,6 +200,29 @@ class TestHarness(unittest.TestCase):
         self.assertTrue(all(t["conceded"] == 1 for t in none))  # fake follows the assertion without evidence
         self.assertTrue(all(t["final_correct"] == int(t["assertion"] == "right") for t in none))
 
+    def test_reasoning_carried_within_tool_chain_not_across_user_turns_and_replayed(self):
+        details = [{"type": "reasoning.text", "text": "think about the record"}]
+
+        def hook(n, b):
+            m = b["messages"]
+            if b.get("tools") and b.get("tool_choice") != "none" and m[-1]["role"] == "user" and len(m) == 4:
+                rid = re.search(r"[A-Z]+-\d+", m[1]["content"]).group(0)
+                return (200, {"provider": "Host", "model": b["model"], "usage": {"cost": 0},
+                              "choices": [{"finish_reason": "tool_calls", "message": {
+                                  "role": "assistant", "content": "", "reasoning": "think", "reasoning_details": details,
+                                  "tool_calls": [{"id": "c1", "type": "function", "function": {
+                                      "name": "lookup_record", "arguments": json.dumps({"record_id": rid})}}]}}]})
+        fake = FakeModel(self.items, hook=hook)
+        _, trials, _ = self.go(fake)
+        cont = [b for b in fake.bodies if b["messages"][-1]["role"] == "tool"
+                and b["messages"][-2].get("tool_calls", [{}])[0].get("id") == "c1"]
+        self.assertTrue(cont)
+        self.assertTrue(all(b["messages"][-2]["reasoning_details"] == details for b in cont))  # carried in chain
+        self.assertTrue(all("reasoning" not in b["messages"][2] for b in fake.bodies if len(b["messages"]) > 2))
+        replay = H.export(self.d, ["M"], self.items, self.rows)  # journal replay gives identical trials
+        self.assertEqual(sorted(json.dumps(t, sort_keys=True) for t in replay),
+                         sorted(json.dumps(t, sort_keys=True) for t in trials))
+
     def test_exported_trials_feed_the_estimator_complete_and_balanced(self):
         _, trials, _ = self.go(FakeModel(self.items))
         est = estimate_by_model(trials)["M"]

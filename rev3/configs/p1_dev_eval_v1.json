@@ -9,6 +9,42 @@
  "halt_error_rate": 0.2,
  "halt_transient_aborts": 25,
  "models": {
+  "deepseek-v3.2-nothinking": {
+   "slug": "deepseek/deepseek-v3.2",
+   "provider": "atlas-cloud/fp8",
+   "provider_name": "AtlasCloud",
+   "quantization": "fp8",
+   "params": {
+    "max_tokens": 8192,
+    "temperature": 1.0,
+    "top_p": 0.95,
+    "reasoning": {
+     "enabled": false
+    }
+   },
+   "price_in_per_m": 0.26,
+   "price_out_per_m": 0.38,
+   "concurrency_start": 256,
+   "concurrency_max": 256
+  },
+  "deepseek-v3.2-thinking": {
+   "slug": "deepseek/deepseek-v3.2",
+   "provider": "atlas-cloud/fp8",
+   "provider_name": "AtlasCloud",
+   "quantization": "fp8",
+   "params": {
+    "max_tokens": 8192,
+    "temperature": 1.0,
+    "top_p": 0.95,
+    "reasoning": {
+     "enabled": true
+    }
+   },
+   "price_in_per_m": 0.26,
+   "price_out_per_m": 0.38,
+   "concurrency_start": 256,
+   "concurrency_max": 256
+  },
   "gpt-oss-120b": {
    "slug": "openai/gpt-oss-120b",
    "provider": "deepinfra/bf16",
@@ -27,21 +63,18 @@
    "concurrency_start": 256,
    "concurrency_max": 256
   },
-  "deepseek-v3.2": {
-   "slug": "deepseek/deepseek-v3.2",
-   "provider": "atlas-cloud/fp8",
-   "provider_name": "AtlasCloud",
+  "kimi-k2-0905": {
+   "slug": "moonshotai/kimi-k2-0905",
+   "provider": "novita/fp8",
+   "provider_name": "Novita",
    "quantization": "fp8",
    "params": {
     "max_tokens": 8192,
-    "temperature": 1.0,
-    "top_p": 0.95,
-    "reasoning": {
-     "enabled": false
-    }
+    "temperature": 0.6,
+    "top_p": 1.0
    },
-   "price_in_per_m": 0.26,
-   "price_out_per_m": 0.38,
+   "price_in_per_m": 0.6,
+   "price_out_per_m": 2.5,
    "concurrency_start": 256,
    "concurrency_max": 256
   },
@@ -59,21 +92,6 @@
    },
    "price_in_per_m": 0.09,
    "price_out_per_m": 0.55,
-   "concurrency_start": 256,
-   "concurrency_max": 256
-  },
-  "kimi-k2-0905": {
-   "slug": "moonshotai/kimi-k2-0905",
-   "provider": "novita/fp8",
-   "provider_name": "Novita",
-   "quantization": "fp8",
-   "params": {
-    "max_tokens": 8192,
-    "temperature": 0.6,
-    "top_p": 1.0
-   },
-   "price_in_per_m": 0.6,
-   "price_out_per_m": 2.5,
    "concurrency_start": 256,
    "concurrency_max": 256
   }

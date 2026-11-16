@@ -31,6 +31,7 @@ from p1v3 import stimuli as S
 from p1v3.estimands import ASSERTIONS, PRESSURES, ROUTES, SNAPSHOTS
 
 ARMS = tuple(product(PRESSURES, ROUTES))
+REASONING_KEYS = ("reasoning", "reasoning_details", "reasoning_content")
 
 
 def design(items, repeats, seed=20261116):
@@ -132,7 +133,13 @@ def run_branch(call, skip, item, row):
             skip_rest(j + 1, "lookup_cap_reached")
             break
         canon = [canonical_call(tc) for tc in tcs]
-        msgs = msgs + [{"role": "assistant", "content": "", "tool_calls": canon}]
+        # Within a tool-call chain the model's own reasoning goes back with its tool-call message, as returned
+        # (OpenRouter reasoning-preservation guidance; DeepSeek V3.2 thinking + tools; gpt-oss harmony). A new
+        # user turn (turn 1 -> turn 2) drops prior reasoning, per the same conventions, so turn 1 replays as text.
+        own = r.get("message") or {}
+        amsg = {"role": "assistant", "content": "", "tool_calls": canon}
+        amsg.update({k: own[k] for k in REASONING_KEYS if own.get(k)})
+        msgs = msgs + [amsg]
         for tc in canon:
             if trial["n_lookups"] < S.K and tc["function"]["name"] == "lookup_record":
                 rid = lookup_id(tc)

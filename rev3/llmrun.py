@@ -431,6 +431,7 @@ class Runner:
         reasoning = msg.get("reasoning") or msg.get("reasoning_content") or msg.get("reasoning_details")
         return self._result(key, model, "ok", text=msg.get("content") or "", tool_calls=msg.get("tool_calls"),
                             reasoning_returned=bool(reasoning),
+                            reasoning_tokens=(usage.get("completion_tokens_details") or {}).get("reasoning_tokens"),
                             message=msg, truncated=ch.get("finish_reason") == "length", **common)
 
     def skip(self, key, model, reason):

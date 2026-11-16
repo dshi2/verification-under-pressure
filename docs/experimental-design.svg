@@ -1,54 +1,92 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="850" viewBox="0 0 1280 850" role="img" aria-labelledby="title desc">
-<title id="title">Verification Under Pressure — experimental pipeline and contrasts</title>
-<desc id="desc">Two-turn experiment. Turn one has no tools and reads a current or stale dated source. Turn two varies an assigned right or wrong user assertion, neutral, insistent or irrelevant authority wording, and none, optional or supplied evidence. A deterministic no-LLM-grader scorer tracks tool attempts and final accuracy. Four models, 60 registry items, 36 cells per item, five repetitions, 43,200 trials. E1 through E4 are the primary contrasts.</desc>
-<rect width="1280" height="850" fill="#f6f9fc"/><rect x="0" y="0" width="1280" height="9" fill="#126e7a"/>
-<text x="56" y="54" fill="#12263c" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="30" font-weight="750"><tspan x="56" dy="0">VERIFICATION UNDER PRESSURE</tspan></text>
-<text x="56" y="82" fill="#586b7d" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="17" font-weight="400"><tspan x="56" dy="0">What changes under insistence: choosing to verify, or using evidence already supplied?</tspan></text>
-<rect x="56" y="111" width="482" height="237" rx="17" fill="#fff" stroke="#9fc7cc" stroke-width="1.4"/>
-<rect x="56" y="111" width="482" height="43" rx="17" fill="#e5f3f4"/>
-<text x="78" y="139" fill="#146575" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="18" font-weight="700"><tspan x="78" dy="0">01   TURN 1  /  SHARED PREFIX</tspan></text>
-<text x="78" y="177" fill="#1b3045" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="19" font-weight="650"><tspan x="78" dy="0">Dated secondary-source snapshot</tspan></text>
-<text x="78" y="208" fill="#314e62" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="16" font-weight="400"><tspan x="78" dy="0">CURRENT: agrees with today's registry</tspan></text>
-<text x="78" y="235" fill="#314e62" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="16" font-weight="400"><tspan x="78" dy="0">STALE: conflicts with today's registry</tspan></text>
-<rect x="76" y="255" width="441" height="66" rx="11" fill="#f2f7f9"/>
-<text x="93" y="279" fill="#223d52" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="15" font-weight="400"><tspan x="93" dy="0">No lookup tool offered. Model answers JSON:</tspan></text>
-<text x="93" y="303" fill="#176b77" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="16" font-weight="650"><tspan x="93" dy="0">value A / value B / unknown</tspan></text>
-<rect x="565" y="111" width="659" height="237" rx="17" fill="#fff" stroke="#c9bbeb" stroke-width="1.4"/>
-<rect x="565" y="111" width="659" height="43" rx="17" fill="#f0ecfa"/>
-<text x="588" y="139" fill="#5f4c91" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="18" font-weight="700"><tspan x="588" dy="0">02   TURN 2  /  RANDOMIZED FACTORS</tspan></text>
-<text x="590" y="181" fill="#203447" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="17" font-weight="650"><tspan x="590" dy="0">Assigned assertion</tspan></text>
-<text x="590" y="204" fill="#455c70" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="16" font-weight="400"><tspan x="590" dy="0">RIGHT  or  WRONG (vs. registry)</tspan></text>
-<text x="590" y="244" fill="#203447" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="17" font-weight="650"><tspan x="590" dy="0">Social pressure</tspan></text>
-<text x="590" y="267" fill="#455c70" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="15" font-weight="400"><tspan x="590" dy="0">NEUTRAL / INSISTENCE / IRRELEVANT AUTHORITY</tspan></text>
-<text x="590" y="311" fill="#5b6271" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="15" font-weight="400"><tspan x="590" dy="0">One cached first answer is reused across 18 second-turn branches.</tspan></text>
-<path d="M538 232 H565" stroke="#7993a5" stroke-width="2.5" fill="none"/><path d="M558 226 L565 232 L558 238" stroke="#7993a5" stroke-width="2" fill="none"/>
-<text x="56" y="396" fill="#253f57" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="18" font-weight="750"><tspan x="56" dy="0">03   EVIDENCE ROUTE (TURN 2 ONLY)</tspan></text>
-<rect x="56" y="414" width="368" height="136" rx="17" fill="#fff" stroke="#d6e0e8" stroke-width="1.4"/><rect x="456" y="414" width="368" height="136" rx="17" fill="#fff" stroke="#d6e0e8" stroke-width="1.4"/><rect x="856" y="414" width="368" height="136" rx="17" fill="#fff" stroke="#d6e0e8" stroke-width="1.4"/>
-<rect x="76" y="433" width="77" height="28" rx="14" fill="#eef1f5"/>
-<text x="89" y="452" fill="#536276" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="14" font-weight="750"><tspan x="89" dy="0">NONE</tspan></text>
-<text x="77" y="488" fill="#203447" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="20" font-weight="650"><tspan x="77" dy="0">No lookup tool</tspan></text>
-<text x="77" y="514" fill="#687b8b" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="15" font-weight="400"><tspan x="77" dy="0">Answer from available context</tspan></text>
-<rect x="475" y="433" width="113" height="28" rx="14" fill="#e5f3f4"/>
-<text x="488" y="452" fill="#116777" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="14" font-weight="750"><tspan x="488" dy="0">OPTIONAL</tspan></text>
-<text x="476" y="488" fill="#203447" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="19" font-weight="650"><tspan x="476" dy="0">lookup_record offered</tspan></text>
-<text x="476" y="514" fill="#687b8b" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="15" font-weight="400"><tspan x="476" dy="0">Model chooses whether to call</tspan></text>
-<rect x="874" y="433" width="112" height="28" rx="14" fill="#f0ecfa"/>
-<text x="887" y="452" fill="#664a9a" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="14" font-weight="750"><tspan x="887" dy="0">SUPPLIED</tspan></text>
-<text x="876" y="488" fill="#203447" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="19" font-weight="650"><tspan x="876" dy="0">Current registry injected</tspan></text>
-<text x="876" y="514" fill="#687b8b" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="15" font-weight="400"><tspan x="876" dy="0">Correct-id call + result replayed</tspan></text>
-<path d="M895 348 V373 H240 V414 M895 373 H640 V414 M895 373 H1040 V414" stroke="#97aabc" stroke-width="2" fill="none"/>
-<rect x="56" y="579" width="742" height="204" rx="17" fill="#fff" stroke="#a9bdc8" stroke-width="1.4"/>
-<rect x="56" y="579" width="742" height="44" rx="17" fill="#eaf0f5"/>
-<text x="78" y="608" fill="#2b4d67" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="17" font-weight="750"><tspan x="78" dy="0">04   DETERMINISTIC SCORING  /  NO LLM GRADER</tspan></text>
-<text x="78" y="651" fill="#203447" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="19" font-weight="650"><tspan x="78" dy="0">Observable outcomes</tspan></text>
-<text x="78" y="679" fill="#344e64" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="16" font-weight="400"><tspan x="78" dy="0">Lookup attempted · relevant record retrieved · final answer correct</tspan></text>
-<text x="78" y="710" fill="#344e64" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="15" font-weight="400"><tspan x="78" dy="0">E1: change in optional lookup attempts      E2: supplied-record accuracy change</tspan></text>
-<text x="78" y="736" fill="#344e64" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="15" font-weight="400"><tspan x="78" dy="0">E3: average delivery interaction                E4: user-correctness moderation</tspan></text>
-<text x="78" y="761" fill="#536b7e" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="14" font-weight="400"><tspan x="78" dy="0">Missing results bounded over assigned trials; repeats nested within items.</tspan></text>
-<rect x="825" y="579" width="399" height="204" rx="17" fill="#132c43" stroke="#132c43" stroke-width="1.4"/>
-<text x="849" y="615" fill="#99d6db" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="16" font-weight="750"><tspan x="849" dy="0">EXPERIMENT SCALE</tspan></text>
-<text x="849" y="674" fill="#ffffff" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="48" font-weight="800"><tspan x="849" dy="0">43,200</tspan></text>
-<text x="850" y="706" fill="#d5e4ef" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="15" font-weight="400"><tspan x="850" dy="0">60 items  ×  36 cells  ×  4 models  ×  5 repeats</tspan></text>
-<text x="850" y="740" fill="#bcd0df" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="15" font-weight="400"><tspan x="850" dy="0">12 task families · 4 open-weight models</tspan></text>
-<text x="57" y="823" fill="#64788b" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="14" font-weight="400"><tspan x="57" dy="0">Current vs. stale describes the source snapshot; all offered/injected registry results are current.</tspan></text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 756" role="img" aria-labelledby="title desc">
+<title id="title">Verification Under Pressure: experimental design</title>
+<desc id="desc">A three-panel academic schematic. A: turn 1 supplies a dated current or stale source with no tool, then turn 2 varies assigned right/wrong assertion, pressure and none/optional/supplied evidence; deterministic scoring reads final answers and raw lookup events. B: full randomized grid: 2 snapshots by 2 correctness by 3 pressure by 3 evidence routes, 60 items, 4 models, 5 repeats, 43,200 trials. C: E1 through E4 with family-clustered inference and assigned-denominator bounds.</desc>
+<style>
+text{font-family:Arial,Helvetica,sans-serif;fill:#20242a}
+.h{font-size:19px;font-weight:700}
+.h2{font-size:16px;font-weight:700}
+.t{font-size:15px}
+.s{font-size:13px}
+.xs{font-size:12px}
+.bold{font-weight:700}
+.muted{fill:#57616c}
+.blue{fill:#edf5fc;stroke:#4381b8;stroke-width:1.5}
+.purple{fill:#f3effb;stroke:#8b72b9;stroke-width:1.5}
+.green{fill:#edf7f0;stroke:#579472;stroke-width:1.5}
+.gray{fill:#f7f8fa;stroke:#9da9b5;stroke-width:1.4}
+.orange{fill:#fff4eb;stroke:#cb905c;stroke-width:1.4}
+.paper{fill:#fff;stroke:#9da9b5;stroke-width:1.3}
+.line{fill:none;stroke:#63717f;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.rule{fill:none;stroke:#d2dae2;stroke-width:1}
+</style>
+<rect x="0" y="0" width="1120" height="756" fill="#fff"/>
+<text x="18" y="30" class="h" >A. One trial: the first answer is shared; pressure and evidence vary at turn 2</text>
+<rect x="18" y="48" width="286" height="222" rx="8" class="blue"/>
+<text x="32" y="72" class="h2" >Turn 1: dated source</text>
+<text x="32" y="96" class="s" >A neutral system instruction; dated excerpt</text>
+<text x="32" y="116" class="s" >from a secondary source, either:</text>
+<rect x="32" y="128" width="258" height="53" rx="5" class="paper"/>
+<text x="43" y="148" class="s" >CURRENT  agrees with registry</text>
+<text x="43" y="167" class="s" >STALE       disagrees with registry</text>
+<text x="32" y="203" class="t bold" >No lookup tool is offered.</text>
+<text x="32" y="226" class="s" >Model returns value A / B / unknown.</text>
+<text x="32" y="250" class="s muted" >Answer recorded once per prefix.</text>
+<path d="M304 161 H327 M320 155 L327 161 L320 167" class="line"/>
+<rect x="330" y="48" width="448" height="222" rx="8" class="purple"/>
+<text x="344" y="72" class="h2" >Turn 2: user assertion + evidence policy</text>
+<text x="344" y="95" class="s" >Assertion assigned RIGHT or WRONG vs. current registry</text>
+<text x="344" y="117" class="s" >Pressure: neutral / insistence / irrelevant authority</text>
+<text x="344" y="137" class="s muted" >(four paraphrases per pressure condition)</text>
+<text x="344" y="162" class="s bold" >Evidence route (three mutually exclusive arms):</text>
+<rect x="344" y="173" width="132" height="69" rx="5" class="paper"/>
+<rect x="482" y="173" width="133" height="69" rx="5" class="paper"/>
+<rect x="621" y="173" width="142" height="69" rx="5" class="paper"/>
+<text x="357" y="194" class="s bold" >NONE</text>
+<text x="357" y="213" class="s" >No tool</text>
+<text x="357" y="230" class="s" >available</text>
+<text x="494" y="194" class="s bold" >OPTIONAL</text>
+<text x="494" y="213" class="s" >lookup_record</text>
+<text x="494" y="230" class="s" >offered to model</text>
+<text x="633" y="194" class="s bold" >SUPPLIED</text>
+<text x="633" y="213" class="s" >Current record</text>
+<text x="633" y="230" class="s" >injected by harness</text>
+<text x="344" y="258" class="xs muted" >The same stored first answer is reused across 18 turn-2 branches.</text>
+<path d="M778 161 H801 M794 155 L801 161 L794 167" class="line"/>
+<rect x="804" y="48" width="298" height="222" rx="8" class="green"/>
+<text x="818" y="72" class="h2" >Scoring and outcomes</text>
+<text x="818" y="97" class="s bold" >Deterministic; no LLM grader.</text>
+<text x="818" y="120" class="s" >Read final answer and tool events:</text>
+<text x="818" y="145" class="s" >• lookup attempted</text>
+<text x="818" y="165" class="s" >• relevant record retrieved</text>
+<text x="818" y="185" class="s" >• final answer correct / unknown</text>
+<text x="818" y="205" class="s" >• invalid or missing response</text>
+<text x="818" y="243" class="s muted" >Compare against registry truth.</text>
+<path d="M18 292 H1102" class="rule"/>
+<text x="18" y="323" class="h" >B. Randomized design and completed trial grid</text>
+<rect x="18" y="342" width="1084" height="137" rx="8" class="gray"/>
+<text x="36" y="368" class="s muted" >Source snapshot</text>
+<text x="252" y="368" class="s muted" >User correctness</text>
+<text x="473" y="368" class="s muted" >Pressure</text>
+<text x="741" y="368" class="s muted" >Evidence route</text>
+<text x="36" y="393" class="t bold" >2: current / stale</text>
+<text x="252" y="393" class="t bold" >2: right / wrong</text>
+<text x="473" y="393" class="t bold" >3: neutral / insist / authority</text>
+<text x="741" y="393" class="t bold" >3: none / optional / supplied</text>
+<path d="M36 406 H1084" class="rule"/>
+<text x="36" y="433" class="t bold" >60 registry items (12 families) × 36 cells × 4 models × 5 repeats = 43,200 trials</text>
+<text x="36" y="457" class="s" >Models: gpt-oss-120b · DeepSeek-V3.2 · Qwen3-235B · Kimi-K2</text>
+<path d="M18 498 H1102" class="rule"/>
+<text x="18" y="528" class="h" >C. Predefined contrasts (insistence versus neutral)</text>
+<rect x="18" y="548" width="523" height="139" rx="8" class="paper"/>
+<rect x="555" y="548" width="547" height="139" rx="8" class="paper"/>
+<text x="34" y="574" class="t bold" >E1. Verification attempt</text>
+<text x="34" y="596" class="s" >Δ lookup attempts, optional route</text>
+<text x="34" y="624" class="t bold" >E2. Using supplied evidence</text>
+<text x="34" y="646" class="s" >Δ accuracy, supplied route</text>
+<text x="572" y="574" class="t bold" >E3. Evidence delivery effect</text>
+<text x="572" y="596" class="s" >Mean of D(right) and D(wrong)</text>
+<text x="572" y="624" class="t bold" >E4. User-correctness moderation</text>
+<text x="572" y="646" class="s" >D(right) − D(wrong)</text>
+<text x="18" y="715" class="s" >D(u) = [Δ accuracy under insistence, supplied] − [Δ accuracy under insistence, optional], at assigned user correctness u.</text>
+<text x="18" y="737" class="s muted" >Inference clusters by record family; missing-outcome bounds retain all assigned trials. All offered or injected lookups use current records.</text>
 </svg>

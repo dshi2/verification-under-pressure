@@ -255,8 +255,7 @@ def main():
             w.writeheader()
             w.writerows(rows)
     runner = Runner(a.run_dir, cfg, manifest, dry_transport_for(cfg) if a.dry_run else None, resume=a.resume)
-    print(f"{len(rows) * len(models)} trials; {len(planned)} planned stage slots (realized calls fewer); "
-          f"bound for one billed attempt per slot ${runner.worst_case_usd(planned):.2f}; cap ${cfg['spend_cap_usd']}",
+    print(f"{len(rows) * len(models)} trials; {len(planned)} planned stage slots (realized calls fewer)",
           file=sys.stderr)
     summary = runner.run(tasks, planned)
     trials = export(a.run_dir, models, items, rows)

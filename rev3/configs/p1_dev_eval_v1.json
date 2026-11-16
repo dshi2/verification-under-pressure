@@ -2,7 +2,7 @@
  "run_id": "p1-dev-eval-v1-six-dev-families",
  "allow_live": true,
  "endpoint": "https://openrouter.ai/api/v1/chat/completions",
- "spend_cap_usd": 0,
+ "spend_cap_usd": null,
  "seed": 20261116,
  "timeout_s": 600,
  "max_retries": 6,

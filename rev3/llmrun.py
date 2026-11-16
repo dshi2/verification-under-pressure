@@ -18,8 +18,10 @@ Contract
   models within 10 s is treated as the shared account limit and halves every model. Once stopping, a
   request waiting for a slot is never dispatched; calls already in flight finish (stop_info in the summary
   records how many and their reserved worst case).
-- Spend: budget must never truncate a design (that is what made the shutdown study's cells uneven).
-  run() refuses to start unless spend_cap_usd covers spent + the worst case of every remaining planned
+- Spend is tracked, never used to cut a design short. spend_cap_usd null (the default in our configs) = no
+  cap: the OpenRouter balance is the only stop, and running out (HTTP 402) halts with nothing journaled,
+  so a top-up plus --resume continues the identical design. A numeric cap is optional: run() then refuses
+  to start unless it covers spent + the worst case of every remaining planned
   call, ONE billed attempt each (input bounded by UTF-8 bytes + template overhead, output by max_tokens).
   Each attempt writes an intent with that reservation and settles to the billed cost after. An HTTP error
   response (never billed) voids its intent. An attempt whose billing is unknown (timeout, dropped
@@ -340,7 +342,8 @@ class Runner:
         for attempt in range(self.cfg["max_retries"] + 1):
             reserve, iid = self._reserve(model, body), f"{key}#{attempt}#{time.time_ns()}"
             with self.lock:
-                if self.spent + self.reserved + reserve > self.cfg["spend_cap_usd"]:
+                cap = self.cfg["spend_cap_usd"]
+                if cap is not None and self.spent + self.reserved + reserve > cap:
                     self._halt("spend cap reached (runaway guard)")
                     raise Halt("spend cap reached")
                 self.reserved += reserve
@@ -396,12 +399,14 @@ class Runner:
     def _settle(self, key, model, iid, req_sha, status, resp):
         m = self.cfg["models"][model]
         usage = resp.get("usage") or {}
-        cost = usage.get("cost")
-        if cost is None:
-            cost = (usage.get("prompt_tokens", 0) * m["price_in_per_m"]
-                    + usage.get("completion_tokens", 0) * m["price_out_per_m"]) / 1e6
+        cost, unresolved = usage.get("cost"), False
+        if cost is None and "prompt_tokens" in usage and "completion_tokens" in usage:
+            cost = (usage["prompt_tokens"] * m["price_in_per_m"] + usage["completion_tokens"] * m["price_out_per_m"]) / 1e6
+        if cost is None:  # no billing evidence: recorded as unknown (None), never as $0
+            unresolved = True
         common = dict(iid=iid, request_sha256=req_sha, http_status=status, response=resp, usage=usage,
-                      cost_usd=cost, served_provider=resp.get("provider"), served_model=resp.get("model"))
+                      cost_usd=cost, billing_unresolved=unresolved,
+                      served_provider=resp.get("provider"), served_model=resp.get("model"))
         if status != 200 or not resp.get("choices"):
             return self._result(key, model, "failed", error=f"HTTP {status}", **common)
         if resp.get("provider") != m["provider_name"] or not str(resp.get("model", "")).startswith(m["slug"]):
@@ -445,8 +450,8 @@ class Runner:
             self.close()
             raise Halt("planned calls differ from the run's frozen manifest; a changed design is a new run")
         self.planned, self.paused = planned, False
-        need = self.spent + self.worst_case_usd(planned)
-        if need > self.cfg["spend_cap_usd"]:
+        need = self.spent + self.worst_case_usd(planned) if self.cfg["spend_cap_usd"] is not None else 0
+        if self.cfg["spend_cap_usd"] is not None and need > self.cfg["spend_cap_usd"]:
             self.close()
             raise Halt(f"spend_cap_usd {self.cfg['spend_cap_usd']} < worst case for the full design {need:.2f}; "
                        "raise the cap or shrink the design BEFORE starting")
@@ -513,12 +518,12 @@ class Runner:
             by[r["model"]][r["status"]] += 1
         s = dict(state, tasks=n, not_run=n - state["finished"] - state["aborted"], halted=self.stop.is_set(),
                  paused=getattr(self, "paused", False), complete=state["finished"] == n,
-                 spent_usd=round(self.spent, 6),  # exposure = confirmed + unresolved (in-flight is 0 at the end)
+                 spent_usd=round(self.spent, 6),
+                 results_without_billing=sum(bool(r.get("billing_unresolved")) for r in self.done.values()),
                  confirmed_usd=round(self.spent - self.unsettled - self.unsettled_prior, 6),
                  unsettled_billing_usd=round(self.unsettled + self.unsettled_prior, 6),
                  stop_info=self.stop_info, journal_by_model=by,
-                 calls_pending=sum(p[0] not in self.done for p in self.planned),
-                 remaining_worst_case_usd=round(self.worst_case_usd(self.planned), 6))
+                 calls_pending=sum(p[0] not in self.done for p in self.planned))
         with self.lock:
             self._write({"type": "session", "event": "end", "summary": s, "t": time.time()})
         with open(os.path.join(self.dir, "summary.json"), "w") as f:

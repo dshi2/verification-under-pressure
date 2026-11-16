@@ -199,7 +199,7 @@ Pilot data are never pooled. **Before observing any confirmatory outcomes**, fre
 ## 10. Implementation status
 **Implemented:** `p1v3/estimands.py` defines E1, E1b and E2–E4 as explicit cell-weight contrasts. It returns point estimates (items weighted equally; dropped items and missing outcomes counted) and sign-aware assigned-denominator bounds. `tests/test_estimands.py` covers recovery on constructed data with a known null, a known moderation (E3 = 0.375, E4 = −0.25), attempt vs. relevant separation, authority as a separate contrast, incomplete items, bounds equal to the point estimate when data are complete, E1 bounds of [−1, 1] when all attempts are missing, and bounds matching the min/max over every 0/1 completion (brute force). Interval estimation is not implemented: the method waits on the §9 coverage simulation.
 
-**Not implemented:** the harness. After this spec passes review, a **new** harness (not an edit of the archive) must:
+**Harness (16 Nov 2026, awaiting Codex implementation review, milestone 3):** `run_p1.py` + `p1v3/stimuli.py` on the shared runner `llmrun.py` (vendored from scope-of-trust `rev3/llmrun.py`, commit 2562908, sha256 159618ea…). `analyze_p1.py` runs validity checks, then E1–E4 per model against the frozen manifest. `tests/test_harness.py` covers every required test listed below against a scripted fake model. Development families and paraphrases only: paraphrases are unrated (§5), K = 3 is provisional (open decision 4), and no interval method yet (§9). Any model data collected now is a development-case evaluation. The harness requirements were:
 - read `DESIGN_MATRIX.csv` and refuse runs outside it
 - journal turn 1 before branching
 - use the global budget ledger

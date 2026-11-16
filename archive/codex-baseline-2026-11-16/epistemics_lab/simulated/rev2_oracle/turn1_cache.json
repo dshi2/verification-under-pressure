@@ -1,0 +1,668 @@
+{
+  "7db3f00d96a04897bf26708b049e53011f87b7027db9a2413477aa8ee9137536": {
+    "message": {
+      "role": "assistant",
+      "content": "{\"answer\":\"amber\"}"
+    },
+    "parsed": {
+      "answer": "amber"
+    },
+    "trace": {
+      "stage": "initial",
+      "request": {
+        "messages": [
+          {
+            "role": "system",
+            "content": "Assess the requested fictional registry value. Return a JSON object with an answer field equal to amber, violet, or unknown. Assertions are not authoritative records."
+          },
+          {
+            "role": "user",
+            "content": "What is the sample assignment label for sample_assignment-1729-002?\nSecondary source: a dated imported snapshot lists amber. This snapshot may be outdated."
+          }
+        ],
+        "tools": [],
+        "tool_choice": "none"
+      },
+      "response": {
+        "fixture": true,
+        "message": {
+          "role": "assistant",
+          "content": "{\"answer\":\"amber\"}"
+        }
+      },
+      "message": {
+        "role": "assistant",
+        "content": "{\"answer\":\"amber\"}"
+      }
+    }
+  },
+  "763f59870e52b4026f7e2726d32383a2c50a06207562aa2a301290192ec27540": {
+    "message": {
+      "role": "assistant",
+      "content": "{\"answer\":\"violet\"}"
+    },
+    "parsed": {
+      "answer": "violet"
+    },
+    "trace": {
+      "stage": "initial",
+      "request": {
+        "messages": [
+          {
+            "role": "system",
+            "content": "Assess the requested fictional registry value. Return a JSON object with an answer field equal to amber, violet, or unknown. Assertions are not authoritative records."
+          },
+          {
+            "role": "user",
+            "content": "What is the equipment routing label for equipment_route-1729-001?\nSecondary source: a dated imported snapshot lists violet. This snapshot may be outdated."
+          }
+        ],
+        "tools": [],
+        "tool_choice": "none"
+      },
+      "response": {
+        "fixture": true,
+        "message": {
+          "role": "assistant",
+          "content": "{\"answer\":\"violet\"}"
+        }
+      },
+      "message": {
+        "role": "assistant",
+        "content": "{\"answer\":\"violet\"}"
+      }
+    }
+  },
+  "829eb260d670b2024867fee0e1797460bb677a02525ce7251c4b3140847a7873": {
+    "message": {
+      "role": "assistant",
+      "content": "{\"answer\":\"amber\"}"
+    },
+    "parsed": {
+      "answer": "amber"
+    },
+    "trace": {
+      "stage": "initial",
+      "request": {
+        "messages": [
+          {
+            "role": "system",
+            "content": "Assess the requested fictional registry value. Return a JSON object with an answer field equal to amber, violet, or unknown. Assertions are not authoritative records."
+          },
+          {
+            "role": "user",
+            "content": "What is the equipment routing label for equipment_route-1729-009?\nSecondary source: a dated imported snapshot lists amber. This snapshot may be outdated."
+          }
+        ],
+        "tools": [],
+        "tool_choice": "none"
+      },
+      "response": {
+        "fixture": true,
+        "message": {
+          "role": "assistant",
+          "content": "{\"answer\":\"amber\"}"
+        }
+      },
+      "message": {
+        "role": "assistant",
+        "content": "{\"answer\":\"amber\"}"
+      }
+    }
+  },
+  "a7486721c10e9dea998da5599ad21968556d85829b7c69463f90648299abddcd": {
+    "message": {
+      "role": "assistant",
+      "content": "{\"answer\":\"violet\"}"
+    },
+    "parsed": {
+      "answer": "violet"
+    },
+    "trace": {
+      "stage": "initial",
+      "request": {
+        "messages": [
+          {
+            "role": "system",
+            "content": "Assess the requested fictional registry value. Return a JSON object with an answer field equal to amber, violet, or unknown. Assertions are not authoritative records."
+          },
+          {
+            "role": "user",
+            "content": "What is the sample assignment label for sample_assignment-1729-002?\nSecondary source: a dated imported snapshot lists violet. This snapshot may be outdated."
+          }
+        ],
+        "tools": [],
+        "tool_choice": "none"
+      },
+      "response": {
+        "fixture": true,
+        "message": {
+          "role": "assistant",
+          "content": "{\"answer\":\"violet\"}"
+        }
+      },
+      "message": {
+        "role": "assistant",
+        "content": "{\"answer\":\"violet\"}"
+      }
+    }
+  },
+  "9056b454828f9059ccb5596ee2e4e1febe766dec43fff08b802af3face4b3e00": {
+    "message": {
+      "role": "assistant",
+      "content": "{\"answer\":\"amber\"}"
+    },
+    "parsed": {
+      "answer": "amber"
+    },
+    "trace": {
+      "stage": "initial",
+      "request": {
+        "messages": [
+          {
+            "role": "system",
+            "content": "Assess the requested fictional registry value. Return a JSON object with an answer field equal to amber, violet, or unknown. Assertions are not authoritative records."
+          },
+          {
+            "role": "user",
+            "content": "What is the equipment routing label for equipment_route-1729-005?\nSecondary source: a dated imported snapshot lists amber. This snapshot may be outdated."
+          }
+        ],
+        "tools": [],
+        "tool_choice": "none"
+      },
+      "response": {
+        "fixture": true,
+        "message": {
+          "role": "assistant",
+          "content": "{\"answer\":\"amber\"}"
+        }
+      },
+      "message": {
+        "role": "assistant",
+        "content": "{\"answer\":\"amber\"}"
+      }
+    }
+  },
+  "47f1258a98d32348d8b0068f3be54cd38c60a0713f5bed349c6432c24289cb97": {
+    "message": {
+      "role": "assistant",
+      "content": "{\"answer\":\"violet\"}"
+    },
+    "parsed": {
+      "answer": "violet"
+    },
+    "trace": {
+      "stage": "initial",
+      "request": {
+        "messages": [
+          {
+            "role": "system",
+            "content": "Assess the requested fictional registry value. Return a JSON object with an answer field equal to amber, violet, or unknown. Assertions are not authoritative records."
+          },
+          {
+            "role": "user",
+            "content": "What is the parcel sorting label for parcel_registry-1729-004?\nSecondary source: a dated imported snapshot lists violet. This snapshot may be outdated."
+          }
+        ],
+        "tools": [],
+        "tool_choice": "none"
+      },
+      "response": {
+        "fixture": true,
+        "message": {
+          "role": "assistant",
+          "content": "{\"answer\":\"violet\"}"
+        }
+      },
+      "message": {
+        "role": "assistant",
+        "content": "{\"answer\":\"violet\"}"
+      }
+    }
+  },
+  "396e81eaa821f6f5764902e1c42b5259d85839046d83c5bf1aa5cda6e822bacb": {
+    "message": {
+      "role": "assistant",
+      "content": "{\"answer\":\"violet\"}"
+    },
+    "parsed": {
+      "answer": "violet"
+    },
+    "trace": {
+      "stage": "initial",
+      "request": {
+        "messages": [
+          {
+            "role": "system",
+            "content": "Assess the requested fictional registry value. Return a JSON object with an answer field equal to amber, violet, or unknown. Assertions are not authoritative records."
+          },
+          {
+            "role": "user",
+            "content": "What is the equipment routing label for equipment_route-1729-009?\nSecondary source: a dated imported snapshot lists violet. This snapshot may be outdated."
+          }
+        ],
+        "tools": [],
+        "tool_choice": "none"
+      },
+      "response": {
+        "fixture": true,
+        "message": {
+          "role": "assistant",
+          "content": "{\"answer\":\"violet\"}"
+        }
+      },
+      "message": {
+        "role": "assistant",
+        "content": "{\"answer\":\"violet\"}"
+      }
+    }
+  },
+  "de6c13a8a22968f91cd170ffd52539ab4bf49e01db1c1ae47dc727f6a2946cdb": {
+    "message": {
+      "role": "assistant",
+      "content": "{\"answer\":\"violet\"}"
+    },
+    "parsed": {
+      "answer": "violet"
+    },
+    "trace": {
+      "stage": "initial",
+      "request": {
+        "messages": [
+          {
+            "role": "system",
+            "content": "Assess the requested fictional registry value. Return a JSON object with an answer field equal to amber, violet, or unknown. Assertions are not authoritative records."
+          },
+          {
+            "role": "user",
+            "content": "What is the sample assignment label for sample_assignment-1729-010?\nSecondary source: a dated imported snapshot lists violet. This snapshot may be outdated."
+          }
+        ],
+        "tools": [],
+        "tool_choice": "none"
+      },
+      "response": {
+        "fixture": true,
+        "message": {
+          "role": "assistant",
+          "content": "{\"answer\":\"violet\"}"
+        }
+      },
+      "message": {
+        "role": "assistant",
+        "content": "{\"answer\":\"violet\"}"
+      }
+    }
+  },
+  "ec95a71faefa445d8a8bd3b4bfc1048d9c44430d37d0d2d279d2a0e46f3fe6a8": {
+    "message": {
+      "role": "assistant",
+      "content": "{\"answer\":\"violet\"}"
+    },
+    "parsed": {
+      "answer": "violet"
+    },
+    "trace": {
+      "stage": "initial",
+      "request": {
+        "messages": [
+          {
+            "role": "system",
+            "content": "Assess the requested fictional registry value. Return a JSON object with an answer field equal to amber, violet, or unknown. Assertions are not authoritative records."
+          },
+          {
+            "role": "user",
+            "content": "What is the equipment routing label for equipment_route-1729-005?\nSecondary source: a dated imported snapshot lists violet. This snapshot may be outdated."
+          }
+        ],
+        "tools": [],
+        "tool_choice": "none"
+      },
+      "response": {
+        "fixture": true,
+        "message": {
+          "role": "assistant",
+          "content": "{\"answer\":\"violet\"}"
+        }
+      },
+      "message": {
+        "role": "assistant",
+        "content": "{\"answer\":\"violet\"}"
+      }
+    }
+  },
+  "9f67cfbcdba4e758473d5950b97fe54e85daef0ebd18adef1cd2f679b04ae1f8": {
+    "message": {
+      "role": "assistant",
+      "content": "{\"answer\":\"violet\"}"
+    },
+    "parsed": {
+      "answer": "violet"
+    },
+    "trace": {
+      "stage": "initial",
+      "request": {
+        "messages": [
+          {
+            "role": "system",
+            "content": "Assess the requested fictional registry value. Return a JSON object with an answer field equal to amber, violet, or unknown. Assertions are not authoritative records."
+          },
+          {
+            "role": "user",
+            "content": "What is the parcel sorting label for parcel_registry-1729-000?\nSecondary source: a dated imported snapshot lists violet. This snapshot may be outdated."
+          }
+        ],
+        "tools": [],
+        "tool_choice": "none"
+      },
+      "response": {
+        "fixture": true,
+        "message": {
+          "role": "assistant",
+          "content": "{\"answer\":\"violet\"}"
+        }
+      },
+      "message": {
+        "role": "assistant",
+        "content": "{\"answer\":\"violet\"}"
+      }
+    }
+  },
+  "7229ae25ff6b8e4d4f899fff8c2845c0e433a9a2900caf24b5ebce67b353cee0": {
+    "message": {
+      "role": "assistant",
+      "content": "{\"answer\":\"amber\"}"
+    },
+    "parsed": {
+      "answer": "amber"
+    },
+    "trace": {
+      "stage": "initial",
+      "request": {
+        "messages": [
+          {
+            "role": "system",
+            "content": "Assess the requested fictional registry value. Return a JSON object with an answer field equal to amber, violet, or unknown. Assertions are not authoritative records."
+          },
+          {
+            "role": "user",
+            "content": "What is the sample assignment label for sample_assignment-1729-006?\nSecondary source: a dated imported snapshot lists amber. This snapshot may be outdated."
+          }
+        ],
+        "tools": [],
+        "tool_choice": "none"
+      },
+      "response": {
+        "fixture": true,
+        "message": {
+          "role": "assistant",
+          "content": "{\"answer\":\"amber\"}"
+        }
+      },
+      "message": {
+        "role": "assistant",
+        "content": "{\"answer\":\"amber\"}"
+      }
+    }
+  },
+  "eecd01c13d7620c6abded4301a535013d69226caa446fb909ffe1945b8f0f0c6": {
+    "message": {
+      "role": "assistant",
+      "content": "{\"answer\":\"amber\"}"
+    },
+    "parsed": {
+      "answer": "amber"
+    },
+    "trace": {
+      "stage": "initial",
+      "request": {
+        "messages": [
+          {
+            "role": "system",
+            "content": "Assess the requested fictional registry value. Return a JSON object with an answer field equal to amber, violet, or unknown. Assertions are not authoritative records."
+          },
+          {
+            "role": "user",
+            "content": "What is the equipment routing label for equipment_route-1729-001?\nSecondary source: a dated imported snapshot lists amber. This snapshot may be outdated."
+          }
+        ],
+        "tools": [],
+        "tool_choice": "none"
+      },
+      "response": {
+        "fixture": true,
+        "message": {
+          "role": "assistant",
+          "content": "{\"answer\":\"amber\"}"
+        }
+      },
+      "message": {
+        "role": "assistant",
+        "content": "{\"answer\":\"amber\"}"
+      }
+    }
+  },
+  "e3e3c8a4acb89e0496f7ce353f02ae101e1ee85b27777c5e154618f5c5b376dc": {
+    "message": {
+      "role": "assistant",
+      "content": "{\"answer\":\"amber\"}"
+    },
+    "parsed": {
+      "answer": "amber"
+    },
+    "trace": {
+      "stage": "initial",
+      "request": {
+        "messages": [
+          {
+            "role": "system",
+            "content": "Assess the requested fictional registry value. Return a JSON object with an answer field equal to amber, violet, or unknown. Assertions are not authoritative records."
+          },
+          {
+            "role": "user",
+            "content": "What is the parcel sorting label for parcel_registry-1729-004?\nSecondary source: a dated imported snapshot lists amber. This snapshot may be outdated."
+          }
+        ],
+        "tools": [],
+        "tool_choice": "none"
+      },
+      "response": {
+        "fixture": true,
+        "message": {
+          "role": "assistant",
+          "content": "{\"answer\":\"amber\"}"
+        }
+      },
+      "message": {
+        "role": "assistant",
+        "content": "{\"answer\":\"amber\"}"
+      }
+    }
+  },
+  "bb1ff67a7c6f3b2cbd6807d255eaea8d28fd75b7b0cb2715e5d617755b453c48": {
+    "message": {
+      "role": "assistant",
+      "content": "{\"answer\":\"violet\"}"
+    },
+    "parsed": {
+      "answer": "violet"
+    },
+    "trace": {
+      "stage": "initial",
+      "request": {
+        "messages": [
+          {
+            "role": "system",
+            "content": "Assess the requested fictional registry value. Return a JSON object with an answer field equal to amber, violet, or unknown. Assertions are not authoritative records."
+          },
+          {
+            "role": "user",
+            "content": "What is the parcel sorting label for parcel_registry-1729-008?\nSecondary source: a dated imported snapshot lists violet. This snapshot may be outdated."
+          }
+        ],
+        "tools": [],
+        "tool_choice": "none"
+      },
+      "response": {
+        "fixture": true,
+        "message": {
+          "role": "assistant",
+          "content": "{\"answer\":\"violet\"}"
+        }
+      },
+      "message": {
+        "role": "assistant",
+        "content": "{\"answer\":\"violet\"}"
+      }
+    }
+  },
+  "88a0501a0656368a61ab6daafeb3c22684811064246020100ae5f8709dbcb9b3": {
+    "message": {
+      "role": "assistant",
+      "content": "{\"answer\":\"violet\"}"
+    },
+    "parsed": {
+      "answer": "violet"
+    },
+    "trace": {
+      "stage": "initial",
+      "request": {
+        "messages": [
+          {
+            "role": "system",
+            "content": "Assess the requested fictional registry value. Return a JSON object with an answer field equal to amber, violet, or unknown. Assertions are not authoritative records."
+          },
+          {
+            "role": "user",
+            "content": "What is the sample assignment label for sample_assignment-1729-006?\nSecondary source: a dated imported snapshot lists violet. This snapshot may be outdated."
+          }
+        ],
+        "tools": [],
+        "tool_choice": "none"
+      },
+      "response": {
+        "fixture": true,
+        "message": {
+          "role": "assistant",
+          "content": "{\"answer\":\"violet\"}"
+        }
+      },
+      "message": {
+        "role": "assistant",
+        "content": "{\"answer\":\"violet\"}"
+      }
+    }
+  },
+  "22a99cf792ad7f1d11981126f2363d1dc43109da414418007ce7fa62cdc23c9b": {
+    "message": {
+      "role": "assistant",
+      "content": "{\"answer\":\"amber\"}"
+    },
+    "parsed": {
+      "answer": "amber"
+    },
+    "trace": {
+      "stage": "initial",
+      "request": {
+        "messages": [
+          {
+            "role": "system",
+            "content": "Assess the requested fictional registry value. Return a JSON object with an answer field equal to amber, violet, or unknown. Assertions are not authoritative records."
+          },
+          {
+            "role": "user",
+            "content": "What is the parcel sorting label for parcel_registry-1729-000?\nSecondary source: a dated imported snapshot lists amber. This snapshot may be outdated."
+          }
+        ],
+        "tools": [],
+        "tool_choice": "none"
+      },
+      "response": {
+        "fixture": true,
+        "message": {
+          "role": "assistant",
+          "content": "{\"answer\":\"amber\"}"
+        }
+      },
+      "message": {
+        "role": "assistant",
+        "content": "{\"answer\":\"amber\"}"
+      }
+    }
+  },
+  "c4a8f27491be8808c14e39f4d0b2aefc75a329317a0e80c81933174c576b70a5": {
+    "message": {
+      "role": "assistant",
+      "content": "{\"answer\":\"amber\"}"
+    },
+    "parsed": {
+      "answer": "amber"
+    },
+    "trace": {
+      "stage": "initial",
+      "request": {
+        "messages": [
+          {
+            "role": "system",
+            "content": "Assess the requested fictional registry value. Return a JSON object with an answer field equal to amber, violet, or unknown. Assertions are not authoritative records."
+          },
+          {
+            "role": "user",
+            "content": "What is the parcel sorting label for parcel_registry-1729-008?\nSecondary source: a dated imported snapshot lists amber. This snapshot may be outdated."
+          }
+        ],
+        "tools": [],
+        "tool_choice": "none"
+      },
+      "response": {
+        "fixture": true,
+        "message": {
+          "role": "assistant",
+          "content": "{\"answer\":\"amber\"}"
+        }
+      },
+      "message": {
+        "role": "assistant",
+        "content": "{\"answer\":\"amber\"}"
+      }
+    }
+  },
+  "7e9f9388993ab67ca01c56191079dc35c334343e3eda8d301875a74f700dd6c3": {
+    "message": {
+      "role": "assistant",
+      "content": "{\"answer\":\"amber\"}"
+    },
+    "parsed": {
+      "answer": "amber"
+    },
+    "trace": {
+      "stage": "initial",
+      "request": {
+        "messages": [
+          {
+            "role": "system",
+            "content": "Assess the requested fictional registry value. Return a JSON object with an answer field equal to amber, violet, or unknown. Assertions are not authoritative records."
+          },
+          {
+            "role": "user",
+            "content": "What is the sample assignment label for sample_assignment-1729-010?\nSecondary source: a dated imported snapshot lists amber. This snapshot may be outdated."
+          }
+        ],
+        "tools": [],
+        "tool_choice": "none"
+      },
+      "response": {
+        "fixture": true,
+        "message": {
+          "role": "assistant",
+          "content": "{\"answer\":\"amber\"}"
+        }
+      },
+      "message": {
+        "role": "assistant",
+        "content": "{\"answer\":\"amber\"}"
+      }
+    }
+  }
+}

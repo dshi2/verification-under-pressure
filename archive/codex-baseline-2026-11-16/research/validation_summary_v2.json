@@ -1,0 +1,20 @@
+{
+  "implementation_tests_passed": 32,
+  "independent_checks_passed": 11,
+  "live_calls": 0,
+  "heldout_trials_executed": 0,
+  "fixtures": {
+    "oracle": {
+      "rows": 468,
+      "P1": 324,
+      "P2": 144,
+      "source_hashes_match": true
+    },
+    "biased": {
+      "rows": 468,
+      "P1": 324,
+      "P2": 144,
+      "source_hashes_match": true
+    }
+  }
+}

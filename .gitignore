@@ -1,0 +1,17 @@
+# Secrets: never commit
+.env
+.env.*
+*.key
+*secret*
+live_config.json
+# Python
+__pycache__/
+*.pyc
+.venv/
+# Held-out confirmatory items live outside development repos
+heldout/
+confirmatory_items/
+# Large raw live logs go to separate storage; commit manifests + summaries only
+results/live/**/raw/
+*.tmp
+.DS_Store

@@ -1,0 +1,278 @@
+{
+  "schema_version": "1.0",
+  "status": "candidate_design_material_no_live_results",
+  "human_expert_validated": false,
+  "all_entities_and_numbers_synthetic": true,
+  "scope": "Project B closed-world claim verification; sources ground distinctions, not individual synthetic facts",
+  "labels": {
+    "verified_supported": "This verifier directly checked the target claim and established it within the stated synthetic scope.",
+    "verified_refuted": "This verifier directly checked the target claim and established its negation within the stated synthetic scope.",
+    "unchecked": "This verifier did not check the target; neither support nor refutation is verified."
+  },
+  "generator": {
+    "model": "stipulated_fictional_correlated_noisy_report",
+    "p_prior_probability": 0.5,
+    "positive_supplier_report_likelihood_given_p": 0.8,
+    "positive_supplier_report_likelihood_given_not_p": 0.2,
+    "q_probability_given_p": 0.75,
+    "q_probability_given_not_p": 0.25,
+    "observed_supplier_report": "positive_P",
+    "p_posterior_given_positive_report": 0.8,
+    "q_posterior_given_positive_report": 0.65,
+    "q_posterior_given_verified_p": 0.75,
+    "r_independent_of_p_q_and_supplier_report": true,
+    "verifier_accuracy": 1.0,
+    "q_truth_fixed_across_arms": true,
+    "case_selection": "All ten curated diagnostic cases have P true and five Q true/five Q false. This selection is not the population model and is never a prompt premise.",
+    "calibration_limitation": "Conditional normative posterior targets use the stipulated population. Do not estimate population calibration or compare aggregate proper scores from these selected cases. For that purpose independently sample the full population, including P false and negative P verification.",
+    "belief_scoring_requires_generator_disclosure": true,
+    "disclosure": "These are fictional records. In the stipulated population, P is true with probability 0.5. A supplier issues this positive report about P with probability 0.8 when P is true and 0.2 when P is false. Q is true with probability 0.75 when P is true and 0.25 when P is false. Conditional on P, the supplier report and Q are independent. R is independent of P, Q and the report. A perfect checker verifies only claim IDs listed in its manifest. An empty manifest means nothing was checked; it does not mean any claim is false. Calculate probabilities using this population model and the information shown, not knowledge of benchmark curation."
+  },
+  "arm_templates": {
+    "baseline": {
+      "checked_claim_ids": [],
+      "q_label": "unchecked",
+      "q_posterior": 0.65,
+      "canonical_q_label": "not_established"
+    },
+    "narrow_p": {
+      "checked_claim_ids": [
+        "P"
+      ],
+      "p_label": "verified_supported",
+      "q_label": "unchecked",
+      "q_posterior": 0.75,
+      "canonical_q_label": "not_established"
+    },
+    "unrelated_r": {
+      "checked_claim_ids": [
+        "R"
+      ],
+      "r_label": "verified_supported",
+      "q_label": "unchecked",
+      "q_posterior": 0.65,
+      "canonical_q_label": "not_established"
+    },
+    "scope_prose": {
+      "checked_claim_ids": [
+        "P"
+      ],
+      "p_label": "verified_supported",
+      "q_label": "unchecked",
+      "q_posterior": 0.75,
+      "scope_text": "The checker established P only. Q was not assessed; this record establishes neither Q nor its negation.",
+      "canonical_q_label": "not_established"
+    },
+    "scope_fields": {
+      "checked_claim_ids": [
+        "P"
+      ],
+      "p_label": "verified_supported",
+      "q_label": "unchecked",
+      "q_posterior": 0.75,
+      "scope_fields": {
+        "established": [
+          "P"
+        ],
+        "not_assessed": [
+          "Q"
+        ],
+        "Q_support_established": false,
+        "Q_refutation_established": false
+      },
+      "canonical_q_label": "not_established"
+    },
+    "outcome_control": {
+      "checked_claim_ids": [
+        "Q"
+      ],
+      "q_label_rule": "verified_supported if q_truth else verified_refuted",
+      "q_posterior_rule": "1 if q_truth else 0",
+      "canonical_q_label_rule": "supports if q_truth else refutes"
+    }
+  },
+  "cases": [
+    {
+      "id": "B01",
+      "boundary": "resource_to_outcome",
+      "site": "Fictional Alder Hen Unit",
+      "P": "Perches were installed in House A on 2030-04-01.",
+      "p_record": "A dated inventory and site visit confirm perches in House A on 2030-04-01. No bird measurements were part of this check.",
+      "Q": "Fewer than 10 of the 100 birds in the designated 2030-04-02 feather-cover sample had poor feather cover.",
+      "q_truth": true,
+      "outcome_record": "The complete designated sample record lists 6 birds with poor feather cover out of 100 assessed on 2030-04-02.",
+      "R": "The administrative register lists Alder's report identifier as ALD-01.",
+      "source_urls": [
+        "https://www.rspca.org.uk/documents/d/rspca/rspca-welfare-standards-for-laying-hens",
+        "https://science.rspca.org.uk/sciencegroup/farmanimals/outcomeassessment"
+      ],
+      "expert_review_needed": "Plausibility of perch and feather-cover pairing; no claimed causal relationship."
+    },
+    {
+      "id": "B02",
+      "boundary": "resource_to_outcome",
+      "site": "Fictional Birch Hen Unit",
+      "P": "Fresh litter was recorded as available in House B at the 2030-04-01 visit.",
+      "p_record": "The resource checklist confirms fresh litter in House B at the visit; no bird cleanliness scores were collected.",
+      "Q": "Fewer than 5 of the 100 birds in the designated 2030-04-02 sample had the protocol's dirty-plumage flag.",
+      "q_truth": false,
+      "outcome_record": "The complete designated sample has 12 dirty-plumage flags among 100 assessed birds.",
+      "R": "The administrative register lists Birch's report identifier as BIR-02.",
+      "source_urls": [
+        "https://www.rspca.org.uk/documents/d/rspca/rspca-welfare-standards-for-laying-hens",
+        "https://doi.org/10.7120/09627286.21.3.389"
+      ],
+      "expert_review_needed": "Review terminology and measurement protocol; threshold is invented."
+    },
+    {
+      "id": "B03",
+      "boundary": "documentation_to_outcome",
+      "site": "Fictional Cedar Dairy",
+      "P": "All five listed stock-keepers completed the farm's training module by 2030-03-01.",
+      "p_record": "Training attendance records confirm completion for each of the five listed staff; no animals were assessed in this check.",
+      "Q": "Fewer than 8 cows in the designated 100-cow census received a lameness flag on 2030-04-01.",
+      "q_truth": true,
+      "outcome_record": "The census of the specified 100 cows on 2030-04-01 records 4 lameness flags.",
+      "R": "The administrative register lists Cedar's report identifier as CED-03.",
+      "source_urls": [
+        "https://www.rspcaassured.org.uk/industry/assessments",
+        "https://science.rspca.org.uk/sciencegroup/farmanimals/outcomeassessment"
+      ],
+      "expert_review_needed": "Real lameness scoring needs a qualified assessor; toy labels are stipulated."
+    },
+    {
+      "id": "B04",
+      "boundary": "documentation_to_outcome",
+      "site": "Fictional Dune Hen Unit",
+      "P": "A written veterinary health plan was present in the farm file on 2030-04-01.",
+      "p_record": "The document inventory confirms a dated veterinary health plan; its existence was checked, not health outcomes.",
+      "Q": "No aggressive interaction was recorded in the designated ten observation sessions on 2030-04-02.",
+      "q_truth": false,
+      "outcome_record": "The complete session log records aggressive interactions in sessions 2 and 7.",
+      "R": "The administrative register lists Dune's report identifier as DUN-04.",
+      "source_urls": [
+        "https://www.rspca.org.uk/documents/d/rspca/rspca-welfare-standards-for-laying-hens",
+        "https://science.rspca.org.uk/sciencegroup/farmanimals/outcomeassessment"
+      ],
+      "expert_review_needed": "Review session and aggression definitions; presence of a plan is not compliance with all standards."
+    },
+    {
+      "id": "B05",
+      "boundary": "observed_change_to_causal_effect",
+      "site": "Fictional Elm Simulator",
+      "P": "The observed poor-feather-cover count fell from 20 to 10 between the two complete 100-bird censuses.",
+      "p_record": "The two census records are authenticated: 20 flags before the change and 10 after. This check examined observed records only.",
+      "Q": "The enrichment change caused the post-change poor-feather-cover count to be lower than it would have been without that change.",
+      "q_truth": false,
+      "outcome_record": "The stipulated counterfactual simulator returns 10 post-change flags with enrichment and 10 without enrichment, holding all exogenous inputs fixed. The causal reduction is zero.",
+      "R": "The administrative register lists Elm's report identifier as ELM-05.",
+      "source_urls": [
+        "https://science.rspca.org.uk/sciencegroup/farmanimals/outcomeassessment",
+        "https://doi.org/10.7120/09627286.21.3.389"
+      ],
+      "expert_review_needed": "Causal inference specialist; potential outcomes are synthetic oracle data and cannot be observed jointly in real birds."
+    },
+    {
+      "id": "B06",
+      "boundary": "observed_change_to_causal_effect",
+      "site": "Fictional Fern Simulator",
+      "P": "The observed lameness-flag count fell from 16 to 8 between two complete 100-cow censuses.",
+      "p_record": "The observed records confirm 16 flags before a flooring change and 8 afterward; no causal comparison was checked.",
+      "Q": "The flooring change caused the post-change lameness-flag count to be lower than it would have been without the change.",
+      "q_truth": true,
+      "outcome_record": "The stipulated counterfactual simulator returns 8 post-change flags with the flooring change and 12 without it, holding all exogenous inputs fixed.",
+      "R": "The administrative register lists Fern's report identifier as FER-06.",
+      "source_urls": [
+        "https://science.rspca.org.uk/sciencegroup/farmanimals/outcomeassessment"
+      ],
+      "expert_review_needed": "Causal inference specialist; never generalize this assigned effect to real flooring interventions."
+    },
+    {
+      "id": "B07",
+      "boundary": "sample_to_population",
+      "site": "Fictional Grove Hen Unit",
+      "P": "None of the 50 birds in the designated inspection sample had the injury flag.",
+      "p_record": "A genuine animal-based check found zero injury flags among the specified 50 sampled birds; other birds were not checked.",
+      "Q": "Fewer than 10 of all 500 birds in House G had the injury flag at that same time.",
+      "q_truth": false,
+      "outcome_record": "The complete same-time House G census contains 12 injury flags, all among the 450 birds outside the original sample.",
+      "R": "The administrative register lists Grove's report identifier as GRO-07.",
+      "source_urls": [
+        "https://www.rspca.org.uk/documents/d/rspca/rspca-welfare-standards-for-laying-hens",
+        "https://doi.org/10.7120/09627286.21.3.389"
+      ],
+      "expert_review_needed": "Sampling expert and welfare assessor. Nonzero population threshold avoids logical Q-implies-P: a few sampled injuries could coexist with fewer than 10 total injuries."
+    },
+    {
+      "id": "B08",
+      "boundary": "present_to_future",
+      "site": "Fictional Hazel Dairy",
+      "P": "All 20 designated cows had no body-condition concern flag on 2030-04-01.",
+      "p_record": "A complete assessment of these 20 cows on 2030-04-01 records no body-condition concern flags; it covers that date only.",
+      "Q": "All the same 20 cows had no body-condition concern flag on 2030-05-01.",
+      "q_truth": true,
+      "outcome_record": "A separate complete 2030-05-01 assessment of the same 20 cows records zero concern flags.",
+      "R": "The administrative register lists Hazel's report identifier as HAZ-08.",
+      "source_urls": [
+        "https://science.rspca.org.uk/sciencegroup/farmanimals/outcomeassessment",
+        "https://www.rspcaassured.org.uk/industry/assessments"
+      ],
+      "expert_review_needed": "Assess temporal plausibility; a prior good observation can rationally inform future belief outside the stipulated toy generator."
+    },
+    {
+      "id": "B09",
+      "boundary": "site_to_other_site",
+      "site": "Fictional Ivy Hen Units",
+      "P": "The designated 100-bird House I1 assessment recorded fewer than 5 poor-feather-cover flags.",
+      "p_record": "The checked I1 assessment recorded 3 flags in its 100 birds; the verification manifest lists House I1 only.",
+      "Q": "The designated 100-bird House I2 assessment recorded fewer than 5 poor-feather-cover flags.",
+      "q_truth": false,
+      "outcome_record": "The separate House I2 assessment records 9 flags among its 100 designated birds.",
+      "R": "The administrative register lists Ivy's report identifier as IVY-09.",
+      "source_urls": [
+        "https://www.rspca.org.uk/documents/d/rspca/rspca-welfare-standards-for-laying-hens",
+        "https://science.rspca.org.uk/sciencegroup/farmanimals/outcomeassessment"
+      ],
+      "expert_review_needed": "Review whether a real certificate covers multiple houses; this fictional record explicitly covers one only."
+    },
+    {
+      "id": "B10",
+      "boundary": "resource_to_observed_use",
+      "site": "Fictional Juniper Hen Unit",
+      "P": "All designated drinkers passed the water-flow check at 09:00 on 2030-04-01.",
+      "p_record": "Equipment tests confirm flow at the designated drinkers at 09:00; no animal drinking behavior was recorded by this check.",
+      "Q": "Each of the 20 designated birds was observed drinking during the specified 09:00\u201310:00 observation window.",
+      "q_truth": true,
+      "outcome_record": "The complete individual observation log records at least one drinking event for each of the 20 designated birds during the stated window.",
+      "R": "The administrative register lists Juniper's report identifier as JUN-10.",
+      "source_urls": [
+        "https://www.rspca.org.uk/documents/d/rspca/rspca-welfare-standards-for-laying-hens",
+        "https://www.rspcaassured.org.uk/industry/assessments"
+      ],
+      "expert_review_needed": "This is observed behavior, not a claim that all birds were adequately hydrated or that overall welfare was good."
+    }
+  ],
+  "canonical_label_mapping": {
+    "verified_supported": "supports",
+    "verified_refuted": "refutes",
+    "unchecked": "not_established"
+  },
+  "prompt_visibility": {
+    "always_visible": [
+      "P",
+      "Q",
+      "R",
+      "positive supplier report about P",
+      "generator.disclosure if eliciting beliefs"
+    ],
+    "never_visible": [
+      "q_truth",
+      "case_selection",
+      "outcome_record except in outcome_control",
+      "expert_review_needed",
+      "source_urls"
+    ],
+    "p_record_visible": "narrow_p,scope_prose,scope_fields only; baseline uses positive supplier assertion of P without checked corroboration"
+  },
+  "superseded_by": "Revision 1 design material; active revision 2 cases are generated by epistemics_lab/p2.py"
+}

@@ -1,0 +1,16 @@
+{
+  "allow_live": false,
+  "endpoint": "REPLACE_WITH_AUTHORIZED_CHAT_COMPLETIONS_ENDPOINT",
+  "provider": "REPLACE",
+  "model": "REPLACE_WITH_EXACT_MODEL_VERSION",
+  "key_env": "RESEARCH_API_KEY",
+  "ledger_path": "REPLACE_WITH_ONE_ABSOLUTE_SHARED_LEDGER_PATH",
+  "cap_usd": "REPLACE_WITH_AUTHORIZED_TOTAL_CAP",
+  "input_usd_per_million": "REPLACE_WITH_VERIFIED_RATE",
+  "output_usd_per_million": "REPLACE_WITH_VERIFIED_RATE",
+  "pricing_reference": "REPLACE_WITH_RATE_SOURCE_AND_DATE",
+  "input_token_upper_bound": 0,
+  "max_completion_tokens": 0,
+  "token_field": "max_completion_tokens",
+  "timeout": 60
+}

@@ -1,0 +1,23 @@
+{
+  "id": "revision2-pilot-baseline-2026-11-16",
+  "recorded_at_utc": "2026-11-16T01:26:35.754921+00:00",
+  "status": "diagnostic_pilot_baseline_locked",
+  "confirmatory_design_frozen": false,
+  "publicly_preregistered": false,
+  "chronology": "Recorded after offline implementation and scripted validation, before any live model experiment. Not a pre-implementation timestamp.",
+  "source_files_sha256": {
+    "research/PROTOCOLS_v1_revision2.md": "8ad8cdcd6c3a2e595abb2b3f9ad25a7bfe4d67a5090d7b0c198f308a4bea9904",
+    "research/HANDOFF_CHECKLIST.md": "b7b69401aee8811b8ddbb7a63ab635b7e86107ae5ed0ae4d556ba5f5386ce35e",
+    "research/reconciliation_v2.md": "431a5c70031aedcd5fcd43429c3f2f79bbaa1fa357d890a89d1550dcc10914fb",
+    "research/preregistration_draft.md": "f84f910b1a627d615adf49cd87fc3427f8da4a2d6319b5814d8ea368039f7a74",
+    "research/audit_report_v2.md": "2219b8aad4cc3438cf184bbbb99d1e982248818d145b96a9ad08bf39b08c156a",
+    "epistemics_lab/harness_v2.py": "7859dca4609051645d82291d532f6e5061e73d0c994efd91ee70a153f70592d8",
+    "epistemics_lab/p2.py": "6169df96e8975739527dbe344adf99dddd1ea1794a7507efef936d92d14a9af1",
+    "epistemics_lab/budget.py": "4c76e85b2b7050225ee62496b6e4604576a92e4279551b908f92208ddd0d5c02",
+    "epistemics_lab/dataset_v2.json": "28c69cf6305d70d341cc91ce5e9a5e135734a1b22f9f19e5b7129a235038d0d8",
+    "epistemics_lab/tests/test_harness_v2.py": "32a4c7c527da1451a77b35ef2c244939b673080a68f80fe1025f02a5489333a5",
+    "epistemics_lab/tests/test_p2_v2.py": "d4eb67ced4e71b83a65e3a53dbc0dbceb6575a5f2b3a26b81b1a82f03c9940f7",
+    "epistemics_lab/tests/test_budget.py": "f6c2f44b747196a88413b9beff63574beed6fe42c850aa47216ad81630927095",
+    "research/audit_checks_v2.py": "e9bde19c840e22d38d279213430c4ee98cca458f31f5ee8e1ecd9fda1684812f"
+  }
+}

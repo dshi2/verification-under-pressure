@@ -1,0 +1,226 @@
+{
+  "assessment_date": "2026-11-16",
+  "scope": "Targeted adversarial novelty screen for two narrowed protocols",
+  "limitations": [
+    "No private unpublished material accessed",
+    "No exhaustive global novelty guarantee",
+    "Current sprint submissions unavailable pending judging",
+    "Public repositories read, not executed",
+    "Metadata date/version anomalies require normalization before bibliography export",
+    "Workshop screen incomplete: OpenReview venue returned loading shell and public API listing returned HTTP 403; search-discovered papers screened individually."
+  ],
+  "sources": [
+    {
+      "id": "A1",
+      "title": "Correction or Manipulation? Measuring Epistemic Vigilance in LLM Agents Under User Pressure",
+      "url": "https://arxiv.org/html/2610.36453v1",
+      "retrieved_date": "2026-11-16",
+      "access_depth": "primary full text; methods and appendix sections",
+      "comparison_topic": "pressure/correctness and supplied verification status",
+      "independently_reproduced": false
+    },
+    {
+      "id": "A2",
+      "title": "Self-Blinding and Counterfactual Self-Simulation Mitigate Biases and Sycophancy in Large Language Models",
+      "url": "https://matanmazor.github.io/files/papers/christian2026blinding.pdf",
+      "retrieved_date": "2026-11-16",
+      "access_depth": "author-hosted primary PDF; section5.3 and AppendixD",
+      "comparison_topic": "voluntary self-call versus supplied blinded judgments",
+      "independently_reproduced": false
+    },
+    {
+      "id": "A2code",
+      "title": "SelfBlindingLLMs sycophancy",
+      "url": "https://github.com/self-model/SelfBlindingLLMs/blob/main/sycophancy/README.md",
+      "retrieved_date": "2026-11-16",
+      "access_depth": "public README",
+      "comparison_topic": "tool-use and post-tool datasets",
+      "independently_reproduced": false
+    },
+    {
+      "id": "A3",
+      "title": "Beyond the Sycophancy Score: How Task, Model, and Pressure Shape LLM Yielding",
+      "url": "https://arxiv.org/html/2610.08840v1",
+      "retrieved_date": "2026-11-16",
+      "access_depth": "primary full text; abstract, methods and results structure",
+      "comparison_topic": "task verification cost and yielding",
+      "independently_reproduced": false
+    },
+    {
+      "id": "A4",
+      "title": "Not All Information Is Worth Asking For: Decision-Informed Information Seeking with LLMs",
+      "url": "https://arxiv.org/html/2610.32181v1",
+      "retrieved_date": "2026-11-16",
+      "access_depth": "primary full text; abstract and methods overview",
+      "comparison_topic": "costed information acquisition and stopping",
+      "independently_reproduced": false
+    },
+    {
+      "id": "A5",
+      "title": "MCP Backed Multi Agent Sycophancy Detector",
+      "url": "https://github.com/syedairhakazmi/MCP-Sycophancy-Detector",
+      "retrieved_date": "2026-11-16",
+      "access_depth": "public README workflow/results, no execution",
+      "comparison_topic": "pressure, search, citation verifier; human labels pending",
+      "independently_reproduced": false
+    },
+    {
+      "id": "A6",
+      "title": "Your AI Agent Folds When You Push Back: Measured Sycophancy and a Challenge-Triggered Verification Gate",
+      "url": "https://hexisteme.github.io/notes/challenge-triggered-reverification.html",
+      "retrieved_date": "2026-11-16",
+      "access_depth": "author implementation note; not controlled trial",
+      "comparison_topic": "mandatory gate precedent; corrected keyword-only enforcement",
+      "independently_reproduced": false
+    },
+    {
+      "id": "A7",
+      "title": "Monitorability Disposition in Large Reasoning Models",
+      "url": "https://arxiv.org/html/2610.04914v1",
+      "retrieved_date": "2026-11-16",
+      "access_depth": "primary full text; methods overview",
+      "comparison_topic": "optional/mandated reporting tools",
+      "independently_reproduced": false
+    },
+    {
+      "id": "B1",
+      "title": "Silence Is Endorsement: Verification-Status Laundering in LLM Agent Pipelines",
+      "url": "https://arxiv.org/html/2609.20211",
+      "retrieved_date": "2026-11-16",
+      "access_depth": "primary full text; conditions and estimands; follow-up inspected remaining appendices F–K, including structured survival and placement controls",
+      "comparison_topic": "same proposition, status loss vs explicit verification",
+      "independently_reproduced": false
+    },
+    {
+      "id": "B2",
+      "title": "Authority Bias in Language Models: Source Deference and User Agreement Are Not Interchangeable",
+      "url": "https://arxiv.org/html/2609.37616v1",
+      "retrieved_date": "2026-11-16",
+      "access_depth": "primary full text; abstract/methods overview",
+      "comparison_topic": "false answers attributed to verified sources",
+      "independently_reproduced": false
+    },
+    {
+      "id": "B3",
+      "title": "What Counts as Evidence? Epistemic Cue Utilization in Large Language Models",
+      "url": "https://arxiv.org/html/2610.12788v1",
+      "retrieved_date": "2026-11-16",
+      "access_depth": "primary full text; AppendixC verification and interventions",
+      "comparison_topic": "direct-target verified record and structured ledgers",
+      "independently_reproduced": false
+    },
+    {
+      "id": "B4",
+      "title": "Relevant Is Not Warranted: Evidence-Force Calibration for Cited RAG",
+      "url": "https://arxiv.org/html/2605.28044v1",
+      "retrieved_date": "2026-11-16",
+      "access_depth": "primary full text; benchmark and result sections",
+      "comparison_topic": "supported versus locally force-raised claims",
+      "independently_reproduced": false
+    },
+    {
+      "id": "B5",
+      "title": "Does the word verified steer what action an AI model favors?",
+      "url": "https://apartresearch.com/sprints/projects/does-the-word-verified-steer-what-action-an-ai-model-favors-5taz",
+      "retrieved_date": "2026-11-16",
+      "access_depth": "primary project summary; full PDF not downloaded",
+      "comparison_topic": "same facts with Verified/Preliminary swaps",
+      "independently_reproduced": false
+    },
+    {
+      "id": "B6",
+      "title": "ClaimReceipt: Verifying Evidence Sufficiency and Coverage in Agent Evaluations",
+      "url": "https://arxiv.org/abs/2609.01992",
+      "retrieved_date": "2026-11-16",
+      "access_depth": "primary abstract only",
+      "comparison_topic": "claim-relative evidence receipts",
+      "independently_reproduced": false
+    },
+    {
+      "id": "B7",
+      "title": "Quantifying Overclaiming Propensity in Frontier LLM Agents",
+      "url": "https://arxiv.org/abs/2609.20812",
+      "retrieved_date": "2026-11-16",
+      "access_depth": "primary abstract only",
+      "comparison_topic": "claims of completed work versus transcripts",
+      "independently_reproduced": false
+    },
+    {
+      "id": "B8",
+      "title": "Fluent and wrong: seven failure patterns in extended AI use",
+      "url": "https://link.springer.com/article/10.1007/s43681-026-01478-5",
+      "retrieved_date": "2026-11-16",
+      "access_depth": "primary journal full text; section1.3",
+      "comparison_topic": "exploratory real-anchor halo",
+      "independently_reproduced": false
+    },
+    {
+      "id": "ecosystem1",
+      "title": "AI x Epistemics Research Sprint",
+      "url": "https://apartresearch.com/sprints/ai-x-epistemics-research-sprint-2026-11-13-to-2026-11-15",
+      "retrieved_date": "2026-11-16",
+      "access_depth": "official page; tracks/resources/FAQ",
+      "comparison_topic": "current submissions hidden until judging",
+      "independently_reproduced": false
+    },
+    {
+      "id": "ecosystem2",
+      "title": "Syco-Lingual",
+      "url": "https://github.com/alexcsaky/OLD-syco-lingual",
+      "retrieved_date": "2026-11-16",
+      "access_depth": "public README",
+      "comparison_topic": "targeted co-designer repository check",
+      "independently_reproduced": false
+    },
+    {
+      "id": "A_When2Tool",
+      "title": "LLM Agents Already Know When to Call Tools -- Even Without Reasoning",
+      "url": "https://arxiv.org/abs/2605.09252",
+      "project_url": "https://lilywenglab.github.io/when2tool/",
+      "retrieved_date": "2026-11-16",
+      "access_depth": "arXiv abstract/metadata and author project page; full paper not reviewed",
+      "comparison_topic": "tool necessity, controlled difficulty, hidden-state probing; no social-pressure manipulation described in inspected sources",
+      "independently_reproduced": false
+    },
+    {
+      "id": "B_Audit",
+      "title": "Audit Without Verification",
+      "url": "https://arxiv.org/abs/2609.07680",
+      "retrieved_date": "2026-11-16",
+      "access_depth": "full-text methods, results, limitations and appendices inspected; no independent reproduction",
+      "independently_reproduced": false
+    },
+    {
+      "id": "B_Vacuous",
+      "title": "Verified but Vacuous",
+      "url": "https://arxiv.org/abs/2611.05590",
+      "retrieved_date": "2026-11-16",
+      "access_depth": "abstract and introduction; full-paper review incomplete",
+      "independently_reproduced": false
+    },
+    {
+      "id": "B_Formatters",
+      "title": "Who Verifies the Tools? How Warped Formatters Mislead Agents and Their Verifiers",
+      "url": "https://arxiv.org/abs/2610.32110",
+      "retrieved_date": "2026-11-16",
+      "access_depth": "main-text methods, results and limitations; arXiv metadata confirms workshop acceptance",
+      "independently_reproduced": false
+    },
+    {
+      "id": "B_Anchor",
+      "title": "Anchor: Preventing Artifact Drift for Reliable Agent Verification",
+      "url": "https://arxiv.org/abs/2605.26321",
+      "retrieved_date": "2026-11-16",
+      "access_depth": "arXiv abstract and metadata only",
+      "independently_reproduced": false
+    },
+    {
+      "id": "B_WorldJudge",
+      "title": "Widening Harm Evaluation Coverage with a Judge that Reads the World",
+      "url": "https://arxiv.org/abs/2611.02624",
+      "retrieved_date": "2026-11-16",
+      "access_depth": "arXiv abstract only",
+      "independently_reproduced": false
+    }
+  ]
+}

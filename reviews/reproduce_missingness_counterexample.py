@@ -9,7 +9,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "rev3"))
 from p1v3.estimands import estimate
 
 rows = [
-    dict(item_id="diagnostic-only", snapshot=s, assertion=a, pressure=p, route=r,
+    dict(model="diagnostic", item_id="diagnostic-only", snapshot=s, assertion=a, pressure=p, route=r,
          final_correct=0, lookup_attempted=None, lookup_relevant=None)
     for s, a, p, r in itertools.product(
         ("current", "stale"), ("right", "wrong"),

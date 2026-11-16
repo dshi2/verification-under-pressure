@@ -2,9 +2,14 @@
 
 Stdlib only. Interval estimation is chosen by the §9 coverage simulation and is not here.
 
-Rows: one per *scheduled* trial, with item_id, snapshot ('current'|'stale'), assertion ('right'|'wrong'),
-pressure ('neutral'|'insistence'|'authority'), route ('none'|'optional'|'supplied') and outcomes
-final_correct / lookup_attempted / lookup_relevant in {1, 0, None}. None = not observed.
+Rows: one per *scheduled* trial, with model (exact snapshot id), item_id, snapshot ('current'|'stale'),
+assertion ('right'|'wrong'), pressure ('neutral'|'insistence'|'authority'), route ('none'|'optional'|'supplied'),
+optional repeat, and outcomes final_correct / lookup_attempted / lookup_relevant in {1, 0, None}.
+None = not observed. A failed trial stays in the rows with None outcomes; it is never deleted.
+
+Fail closed (ValueError) before any estimate if: rows mix models or lack one (use estimate_by_model; no
+cross-model pooling is implemented); any item lacks one of the 36 cells or has unequal repeat counts across
+cells; or, when the frozen manifest is supplied, the scheduled keys differ from it in any way.
 
 Every estimand is a fixed linear contrast of cell means: sum over cells of w_c * mean_c, averaged over
 items with equal weight (repeats averaged within item x cell; snapshots and assertions weighted equally).
@@ -18,6 +23,32 @@ from itertools import product
 
 SNAPSHOTS = ("current", "stale")
 ASSERTIONS = ("right", "wrong")
+PRESSURES = ("neutral", "insistence", "authority")
+ROUTES = ("none", "optional", "supplied")
+CELLS = tuple(product(SNAPSHOTS, ASSERTIONS, PRESSURES, ROUTES))
+KEY = ("model", "item_id", "snapshot", "assertion", "pressure", "route", "repeat")
+
+
+def validate(rows, manifest=None):
+    """Raise ValueError unless rows are one model's complete, balanced schedule (and match manifest)."""
+    models = {r.get("model") for r in rows}
+    if len(models) != 1 or None in models or "" in models:
+        raise ValueError(f"rows must hold exactly one model id, got {sorted(map(str, models))}")
+    n = defaultdict(int)
+    for r in rows:
+        n[(r["item_id"], (r["snapshot"], r["assertion"], r["pressure"], r["route"]))] += 1
+    bad = []
+    for it in sorted({r["item_id"] for r in rows}):
+        counts = {n.get((it, c), 0) for c in CELLS}
+        if 0 in counts or len(counts) != 1:
+            bad.append(it)
+    if bad:
+        raise ValueError(f"incomplete or unbalanced schedule for items {bad[:5]} ({len(bad)} total)")
+    if manifest is not None:
+        def keys(rs):
+            return sorted(tuple(str(r.get(k)) for k in KEY) for r in rs)
+        if keys(rows) != keys([m for m in manifest if m.get("model") in models]):
+            raise ValueError("scheduled rows differ from the frozen manifest")
 
 
 def weights(name, p="insistence"):
@@ -82,7 +113,23 @@ def estimate_one(rows, name, pressure="insistence"):
             "bounds": (_mean(lo), _mean(hi)), "missing_obs": missing}
 
 
-def estimate(rows, pressure="insistence"):
-    out = {"pressure": pressure, "n_items": len({r["item_id"] for r in rows})}
+def estimate(rows, pressure="insistence", manifest=None):
+    """One model's estimands. Validates the schedule first (see module docstring)."""
+    validate(rows, manifest)
+    out = {"model": rows[0]["model"], "pressure": pressure, "n_items": len({r["item_id"] for r in rows})}
     out.update({name: estimate_one(rows, name, pressure) for name in ESTIMANDS})
     return out
+
+
+def estimate_by_model(rows, pressure="insistence", manifest=None):
+    """{model: estimate} computed separately per exact model id. Pooling needs a prespecified rule (§9)."""
+    if any(not r.get("model") for r in rows):
+        raise ValueError("every row needs a model id")
+    by = defaultdict(list)
+    for r in rows:
+        by[r["model"]].append(r)
+    if manifest is not None:
+        missing = {m.get("model") for m in manifest} - set(by)
+        if missing:
+            raise ValueError(f"manifest models with no rows: {sorted(map(str, missing))}")
+    return {m: estimate(rs, pressure, manifest) for m, rs in sorted(by.items())}

@@ -57,7 +57,7 @@ All sessions share the same local checkouts. Do not use worktrees: the raw `runs
 
 **Git rules for every session:**
 - `git add <explicit paths>` only. Never `git add -A`, `git add .` or anything under `runs/`.
-- Before every push, run `git pull --rebase`. If you hit an index.lock, wait and retry.
+- All sessions share one checkout, so the remote never diverges: commit, then `git push`. Never pull, stash, reset, checkout or restore: that would disturb other sessions' uncommitted files. If you hit an index.lock, wait and retry. If a push is rejected, stop and tell the user.
 - Short neutral commit messages ending with the Co-Authored-By line from §0.
 
 **Familiarise first (mandatory before editing anything).** Read, in full:

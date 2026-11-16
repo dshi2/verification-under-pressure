@@ -140,7 +140,7 @@ Outcomes per trial:
   - discrimination = P(concede | right) − P(concede | wrong), per route
   - **concession among realized disagreements** (correction vs. erroneous concession)
   - agreement subgroup (pressure toward an already-held answer)
-  - relevant retrieval (correct id) as a decomposition of E1: Δrelevant = Δattempt × P(relevant | attempted), with the second factor reported by arm
+  - relevant retrieval (correct id), E1b: Δrelevant = P_I(rel) − P_N(rel). Since P(rel) = a·q, with a = P(attempt) and q = P(relevant | attempt), the exact split is Δrelevant = Δa·q_I + a_N·Δq. Δrelevant can be nonzero when Δa = 0: equal attempts with q = 0.2 vs 0.8 give −0.3. q conditions on a post-treatment choice, so its arm difference is descriptive only
   - selective adoption of supplied evidence
 - **Validity checks**, which must pass before any contrast is interpreted:
   - turn-1 eligibility rate and its dependence on snapshot
@@ -148,7 +148,7 @@ Outcomes per trial:
   - the neutral optional-arm check rate and its achievable precision
   - parse and failure rates by arm
 
-**Denominators.** E1 uses scheduled optional trials with status `ok`. An attempt is read from raw tool events, so a malformed final response still records whether a call was made. Accuracy estimands use trials with a valid final answer. Every primary estimate is also given with **assigned-denominator bounds**: missing outcomes are set to 0 and then to 1, using all scheduled trials.
+**Denominators.** E1 uses scheduled optional trials with status `ok`. An attempt is read from raw tool events, so a malformed final response still records whether a call was made. Accuracy estimands use trials with a valid final answer. Every primary estimate is also given with **assigned-denominator bounds** over all scheduled trials. Each estimand is a fixed linear contrast of cell means. For the upper bound, missing outcomes are set to 1 in cells with positive weight and to 0 in cells with negative weight; the lower bound does the reverse. Filling all missing outcomes with 0, then with 1, is **not** a bound for contrasts with weights of both signs. Implemented and brute-force tested (§10).
 
 **E4 precision floor.** The minimum informative precision is a 95% interval half-width ≤ 7.5 percentage points for E4, with ≥ 80% probability in the §9 simulation. The number is provisional and is set from scientific meaning in §9 step 1, never from cost. If the floor is not met, apply these steps in order:
 1. Add independent items and families. This is the main lever, and cost is not a reason to stop.
@@ -187,7 +187,7 @@ Outcomes per trial:
 Pilot data are never pooled.
 
 ## 10. Implementation status
-**Implemented:** `p1v3/estimands.py` computes point estimates for E1, E1b and E2–E4 from trial rows, weighting items equally and counting dropped items and missing outcomes. `tests/test_estimands.py` covers recovery on constructed data with a known null, a known moderation (E3 = 0.375, E4 = −0.25), attempt vs. relevant separation, authority as a separate contrast, and incomplete items. Interval estimation is not implemented: the method waits on the §9 coverage simulation.
+**Implemented:** `p1v3/estimands.py` defines E1, E1b and E2–E4 as explicit cell-weight contrasts. It returns point estimates (items weighted equally; dropped items and missing outcomes counted) and sign-aware assigned-denominator bounds. `tests/test_estimands.py` covers recovery on constructed data with a known null, a known moderation (E3 = 0.375, E4 = −0.25), attempt vs. relevant separation, authority as a separate contrast, incomplete items, bounds equal to the point estimate when data are complete, E1 bounds of [−1, 1] when all attempts are missing, and bounds matching the min/max over every 0/1 completion (brute force). Interval estimation is not implemented: the method waits on the §9 coverage simulation.
 
 **Not implemented:** the harness. After this spec passes review, a **new** harness (not an edit of the archive) must:
 - read `DESIGN_MATRIX.csv` and refuse runs outside it
@@ -245,3 +245,4 @@ Required tests:
 | P1-2 | Demoting E4 must reopen novelty | Adopted (§1, §7, §12.2) |
 | — | Analysis code validated on known effects (§9 step 3) | `p1v3/estimands.py` plus 6 recovery tests (§10) |
 | ChatGPT follow-up (caf0977) | Neutral wording must fit agreement trials | Levels renamed to "neutral assertion"; no paraphrase presupposes disagreement; rated in both trial types (§5) |
+| ChatGPT check (7834fd3) | Retrieval decomposition wrong; 0/1 fills are not bounds for mixed-sign contrasts | Exact split Δa·q_I + a_N·Δq (§7); sign-aware bounds, implemented with brute-force test (§7, §10) |

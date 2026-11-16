@@ -68,6 +68,78 @@ def cells(trials):
     return out
 
 
+def window(run_dir):
+    """Execution window from the journal's session records (first start to last end)."""
+    ts = []
+    with open(os.path.join(run_dir, "journal.jsonl")) as f:
+        for line in f:
+            if '"type": "session"' in line:
+                try:
+                    ts.append(json.loads(line)["t"])
+                except (ValueError, KeyError):
+                    pass
+    import time
+    fmt = lambda t: time.strftime("%Y-%m-%d %H:%M:%S %Z", time.localtime(t))
+    return [fmt(min(ts)), fmt(max(ts))] if ts else None
+
+
+def batches(run_dirs, trials, combined):
+    """Base-only, extension-only and combined estimates, plus the between-batch difference per estimand
+    (Welch t over item-level values, batch 2 minus batch 1). Batches run at different times on hosted models,
+    so pooling is read only alongside this check."""
+    from statistics import mean, stdev
+    from p1v3.inference import t_quantile
+    with_ids = {}
+    for d in run_dirs:
+        with open(os.path.join(d, "trials.jsonl")) as f:
+            with_ids[d] = {json.loads(x)["item_id"] for x in f if x.strip()}
+    out = {"windows": {d: window(d) for d in run_dirs}, "per_batch": {}, "difference": {}}
+    for d in run_dirs:
+        with open(os.path.join(d, "manifest.json")) as f:
+            m = json.load(f)
+        man = [dict(r, model=mo) for mo in m["models"] for r in m["design_rows"]]
+        ts = [t for t in trials if t["item_id"] in with_ids[d]]
+        out["per_batch"][d] = {}
+        for p in ("insistence", "authority"):
+            try:
+                est = estimate_by_model(ts, pressure=p, manifest=man)
+            except ValueError as e:
+                out["per_batch"][d][p] = {"error": str(e)}
+                continue
+            out["per_batch"][d][p] = {mo: {n: {"estimate": e[n]["estimate"], "items_used": e[n]["items_used"],
+                                                "item_values": e[n].pop("item_values")} for n in ESTIMANDS}
+                                      for mo, e in est.items()}
+    if len(run_dirs) == 2:
+        d1, d2 = run_dirs
+        for p in ("insistence", "authority"):
+            b1, b2 = out["per_batch"][d1].get(p, {}), out["per_batch"][d2].get(p, {})
+            if "error" in b1 or "error" in b2:
+                continue
+            out["difference"][p] = {}
+            for mo in b1:
+                out["difference"][p][mo] = {}
+                for n in ESTIMANDS:
+                    x = list(b1[mo][n]["item_values"].values())
+                    y = list(b2[mo][n]["item_values"].values())
+                    r = {"batch1": mean(x) if x else None, "batch2": mean(y) if y else None}
+                    if len(x) > 1 and len(y) > 1:
+                        vx, vy = stdev(x) ** 2 / len(x), stdev(y) ** 2 / len(y)
+                        diff, se = mean(y) - mean(x), (vx + vy) ** 0.5
+                        if se > 0:
+                            df = (vx + vy) ** 2 / (vx ** 2 / (len(x) - 1) + vy ** 2 / (len(y) - 1))
+                            h = t_quantile(0.975, df) * se
+                            r.update(diff=diff, ci95_welch=[diff - h, diff + h])
+                        else:
+                            r.update(diff=diff, ci95_welch=None, note="zero spread in both batches")
+                    out["difference"][p][mo][n] = r
+    for d in run_dirs:
+        for p, est in out["per_batch"][d].items():
+            for mo, e in (est.items() if "error" not in est else []):
+                for n in ESTIMANDS:
+                    e[n].pop("item_values", None)
+    return out
+
+
 def strata(tm):
     """Joint first-answer correctness on (current, stale) per item x repeat (§3): C correct, W wrong,
     U unknown answer, ? ineligible / failed / missing."""
@@ -119,6 +191,8 @@ def main():
             adj = holm({n: est[n]["inference"].get("p_signflip") for n in PRIMARY})
             for n in PRIMARY:
                 est[n]["inference"]["p_holm_primary"] = adj.get(n)
+    if len(a.run_dir) > 1:
+        res["batches"] = batches(a.run_dir, trials, res["estimates"])
     with open(os.path.join(out_dir, "analysis.json"), "w") as f:
         json.dump(res, f, indent=1, sort_keys=True, default=str)
     md = [f"# P1 analysis", "", f"**{LABEL}**", "", f"Runs {a.run_dir}: {res['n_items']} items, {res['n_families']} families. Intervals and p-values are provisional (§9 has not chosen the method); Holm is across E1–E4 within model × pressure.", ""]
@@ -145,6 +219,20 @@ def main():
                 md.append(f"| {name} | {p} | {f3(r.get('estimate'))} | {ci(inf.get('ci95_item_t'))}{deg} | "
                           f"{ci(inf.get('ci95_family_t'))} | {pv} | [{f3(b[0])}, {f3(b[1])}] | "
                           f"{r.get('items_used')} / {r.get('items_dropped_incomplete')} |")
+        md.append("")
+    if "batches" in res:
+        bt = res["batches"]
+        md += ["## Batches (base vs extension; read before the pooled estimates)", "",
+               f"Execution windows: {bt['windows']}", "",
+               "| pressure | model | estimand | batch 1 | batch 2 | difference (2 − 1) | Welch 95% CI |",
+               "|---|---|---|---|---|---|---|"]
+        f3 = lambda v: "–" if v is None else f"{v:+.3f}"
+        for p, by in bt["difference"].items():
+            for mo, ests in by.items():
+                for n_, r in ests.items():
+                    ci = r.get("ci95_welch")
+                    md.append(f"| {p} | {mo} | {n_} | {f3(r['batch1'])} | {f3(r['batch2'])} | {f3(r.get('diff'))} | "
+                              + ("–" if not ci else f"[{ci[0]:+.3f}, {ci[1]:+.3f}]") + " |")
         md.append("")
     with open(os.path.join(out_dir, "analysis.md"), "w") as f:
         f.write("\n".join(md))

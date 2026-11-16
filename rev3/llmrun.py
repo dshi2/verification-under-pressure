@@ -217,7 +217,7 @@ class Runner:
         self.stop = threading.Event()
         self.done, self.spent, self.reserved, self.aborts, self.recent = {}, 0.0, 0.0, 0, []
         self.inflight, self.unsettled_prior, self.cooldown_until, self.account_throttles = {}, 0.0, 0.0, 0
-        self.attempts = self.ambiguous = 0
+        self.reserved_n = self.dispatched = self.responses = self.ambiguous = 0
         self.paused, self.planned, self.unsettled, self.stop_info, self.last429 = False, [], 0.0, None, {}
         self.limiters = {n: Limiter(m["concurrency_start"], m["concurrency_max"]) for n, m in cfg["models"].items()}
         os.makedirs(run_dir, exist_ok=True)
@@ -393,7 +393,7 @@ class Runner:
                     self._halt("spend cap reached (runaway guard)")
                     raise Halt("spend cap reached")
                 self.reserved += reserve
-                self.attempts += 1
+                self.reserved_n += 1
                 self._write({"type": "intent", "iid": iid, "key": key, "reserve_usd": reserve, "t": time.time()})
             lim.acquire()
             self._wait_cooldown()  # shared account cooldown applies to every model
@@ -404,8 +404,13 @@ class Runner:
                 lim.cancel()
                 raise Halt("stopping")
             status, outcome, billed_unknown, retry_after = None, "error", True, None
+            with self.lock:
+                self.dispatched += 1
+                self._write({"type": "dispatch", "iid": iid, "key": key, "t": time.time()})
             try:
                 status, resp, retry_after = self.transport(self.cfg["endpoint"], body, self.cfg["timeout_s"])
+                with self.lock:
+                    self.responses += 1
                 if status in ACCOUNT:
                     billed_unknown, outcome = False, "ok"
                     with self.lock:
@@ -596,7 +601,9 @@ class Runner:
                  paused=getattr(self, "paused", False), complete=state["finished"] == n,
                  spent_usd=round(self.spent, 6),
                  account_throttles=self.account_throttles,
-                 network_attempts_this_session=self.attempts,
+                 reserved_intents_this_session=self.reserved_n,  # includes intents voided before dispatch
+                 dispatched_requests_this_session=self.dispatched,  # handed to the transport
+                 provider_responses_this_session=self.responses,  # any HTTP response received
                  ambiguous_attempts_this_session=self.ambiguous,  # timeouts etc.: may have run remotely
                  unique_stage_results=len(self.done),
                  results_without_billing=sum(bool(r.get("billing_unresolved")) for r in self.done.values()),
@@ -636,9 +643,13 @@ def status(run_dir):
         by.setdefault(r["model"], {}).setdefault(r["status"], 0)
         by[r["model"]][r["status"]] += 1
     pending = [k for k in planned if k not in done]
-    n_intents = sum(r["type"] == "intent" for r in lines[1:])
-    n_ambig = sum(r["type"] == "attempt_error" and r.get("billed_unknown") for r in lines[1:])
-    return {"network_attempts": n_intents, "ambiguous_attempts": n_ambig, "unique_stage_results": len(done),
+    n = lambda f: sum(1 for r in lines[1:] if f(r))
+    return {"reserved_intents": n(lambda r: r["type"] == "intent"),
+            "dispatched_requests": n(lambda r: r["type"] == "dispatch"),
+            "provider_responses": n(lambda r: r["type"] == "result" and r.get("http_status") is not None
+                                    or r["type"] == "attempt_error" and r.get("http_status") is not None),
+            "ambiguous_attempts": n(lambda r: r["type"] == "attempt_error" and r.get("billed_unknown")),
+            "unique_stage_results": len(done),
             "calls_planned": len(planned), "calls_done": len(planned) - len(pending), "calls_pending": len(pending),
             "by_model": by, "spent_usd": round(spent + sum(intents.values()), 6), "in_flight_or_unsettled": len(intents),
             "paused": os.path.exists(os.path.join(run_dir, "PAUSE")), "sessions": sessions}

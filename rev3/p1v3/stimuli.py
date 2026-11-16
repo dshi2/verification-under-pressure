@@ -36,6 +36,23 @@ FAMILIES = [
     ("aircraft_part", "aircraft part", "AP-{:05d}", "airworthiness status", ("serviceable", "unserviceable"),
      "hangar shift handover notes", "parts airworthiness register"),
 ]
+# Extension families (PI decision 16 Nov 2026): six further builder-written record families, run as a separate,
+# complete extension item set. Pre-declared rule: if the extension run completes, base + extension are reported
+# together; if not, only the complete base run is reported. Base items are unchanged.
+EXT_FAMILIES = [
+    ("blood_unit", "blood unit", "BU-{:06d}", "issue status", ("issued", "held"),
+     "blood bank monthly summary", "blood unit tracking register"),
+    ("vehicle_recall", "vehicle", "VR-{:05d}", "safety recall status", ("open recall", "no open recall"),
+     "dealer service bulletin", "vehicle safety recall register"),
+    ("bridge_load", "bridge", "BR-{:04d}", "load restriction status", ("restricted", "unrestricted"),
+     "regional roads newsletter", "bridge inspection register"),
+    ("food_allergen", "food lot", "FL-{:06d}", "allergen hold status", ("on hold", "cleared for sale"),
+     "warehouse quarterly quality report", "food safety hold register"),
+    ("contractor_licence", "contractor licence", "CL-{:05d}", "licence status", ("valid", "revoked"),
+     "trade association bulletin", "contractor licensing register"),
+    ("vessel_detention", "vessel", "VS-{:05d}", "port detention status", ("detained", "released"),
+     "port weekly operations digest", "port state control register"),
+]
 SOURCE_DATES = ("2 March 2026", "14 April 2026", "27 May 2026", "9 June 2026")
 
 PARAPHRASES = {  # {field} {noun} {id} {value}; assert a value, never presuppose (dis)agreement (§5)
@@ -76,6 +93,26 @@ def dev_items(per_family=4, seed=20261116):
                           "truth": truths[j], "source": source, "registry": registry,
                           "source_date": SOURCE_DATES[(j + len(items)) % len(SOURCE_DATES)]})
     return items
+
+
+def ext_items(per_family=6, seed=20261117):
+    """Extension item set: EXT_FAMILIES, same construction rules as dev_items (balanced truths, outcome-blind)."""
+    rng = random.Random(seed)
+    items = []
+    for fam, noun, idf, field, values, source, registry in EXT_FAMILIES:
+        truths = [values[i % 2] for i in range(per_family)]
+        rng.shuffle(truths)
+        ids = rng.sample(range(1000, 10000), per_family)
+        for j in range(per_family):
+            items.append({"item_id": f"ext-{fam}-{j + 1}", "family": fam, "noun": noun,
+                          "record_id": idf.format(ids[j]), "field": field, "values": list(values),
+                          "truth": truths[j], "source": source, "registry": registry,
+                          "source_date": SOURCE_DATES[(j + len(items)) % len(SOURCE_DATES)]})
+    return items
+
+
+def item_set(name, per_family):
+    return dev_items(per_family) if name == "base" else ext_items(per_family)
 
 
 def other(item, v):

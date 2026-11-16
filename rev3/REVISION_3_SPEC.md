@@ -124,6 +124,7 @@ Settings are matched within a model. Differently named reasoning settings across
 - Dev families are visible to builders. Confirmatory families are written by a different author, kept outside this repo, and checked against a fixed rubric. The archived "held-out" family is treated as exposed.
 - A **case-coverage report** lists items per family and snapshot, turn-1 eligibility per model, and under-represented families. Items are never added or dropped because of turn-2 behaviour.
 - Claims are limited to the sampled families. Family effects are estimated, or stress-tested by leaving one family out.
+- **Development extension item set (PI decision, 16 Nov 2026, fixed before any model output).** Six further builder-written families (blood unit issue, vehicle safety recall, bridge load restriction, food allergen hold, contractor licence, vessel port detention) × 6 items = 36 items (`--item-set ext`, seed 20261117), built by the same rules as the 24 base items. It runs as a separate complete run (`runs/p1_ext_v1`) after the base run (`runs/p1_dev_eval_v1`); base items are unchanged. Reporting rule: if the extension run completes, base and extension (60 items, 12 families) are reported together, with family as a level; if it does not, only the complete base run is reported. Both sets are builder-written development cases and are never confirmatory (§6 above, §9).
 
 ## 7. Outcomes and estimands
 Outcomes per trial:

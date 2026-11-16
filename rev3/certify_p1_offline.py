@@ -67,13 +67,14 @@ def main():
     ap.add_argument("--config", required=True)
     ap.add_argument("--repeats", type=int, default=5)
     ap.add_argument("--per-family", type=int, default=4)
+    ap.add_argument("--item-set", choices=("base", "ext"), default="base")
     ap.add_argument("--restarts", type=int, default=3)
     ap.add_argument("--out", required=True)
     a = ap.parse_args()
     Runner.progress_every = 0
     with open(a.config) as f:
         cfg = json.load(f)
-    items = S.dev_items(a.per_family)
+    items = S.item_set(a.item_set, a.per_family)
     rows = H.design(items, a.repeats)
     models = sorted(cfg["models"])
     fails = []

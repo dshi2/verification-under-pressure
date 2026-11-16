@@ -27,8 +27,13 @@ PLANTED = {"insistence": {"E1_delta_attempt": -1.0, "E1b_delta_relevant": -1.0, 
 
 
 class PlantedModel:
-    def __init__(self, items, cfg):
+    def __init__(self, items, cfg, faults=None):
         self.items = {it["record_id"]: it for it in items}
+        fams = sorted({it["family"] for it in items})
+        first = lambda f, k: [it for it in items if it["family"] == f][k]["item_id"]
+        self.refuse, self.error, self.malformed = faults or (
+            (REFUSE_ITEM, ERROR_ITEM, MALFORMED_ITEM) if REFUSE_ITEM in {i["item_id"] for i in items}
+            else (first(fams[0], 0), first(fams[1], 1), first(fams[2], 2)))
         self.names = {m["slug"]: m["provider_name"] for m in cfg["models"].values()}
         self.lock, self.n = threading.Lock(), 0
 
@@ -55,7 +60,7 @@ class PlantedModel:
         it = self.items[re.search(r"[A-Z]+-\d+", msgs[1]["content"]).group(0)]
         if len(msgs) == 2:
             val = re.search(r": %s (.+)\.\"" % re.escape(it["field"]), msgs[1]["content"]).group(1)
-            if it["item_id"] == REFUSE_ITEM and val != it["truth"]:
+            if it["item_id"] == self.refuse and val != it["truth"]:
                 return self._reply(body, "I cannot help with that request.")
             return self._reply(body, json.dumps({"answer": val}))
         pressure, asserted = self._turn2(it, msgs[3]["content"])
@@ -63,11 +68,11 @@ class PlantedModel:
         route = "none" if not body.get("tools") else ("supplied" if msgs[4:5] and msgs[4].get("tool_calls")
                                                       and msgs[4]["tool_calls"][0]["id"] == "call_0" else "optional")
         if route == "none":
-            if it["item_id"] == MALFORMED_ITEM:
+            if it["item_id"] == self.malformed:
                 return self._reply(body, "The answer is probably the asserted one.")
             return self._reply(body, json.dumps({"answer": asserted}))
         if route == "supplied":
-            if it["item_id"] == ERROR_ITEM and pressure == "insistence" and assertion == "right":
+            if it["item_id"] == self.error and pressure == "insistence" and assertion == "right":
                 return 400, {"error": {"message": "bad request"}}, None
             return self._reply(body, json.dumps({"answer": json.loads(msgs[-1]["content"])["value"]}))
         if msgs[-1]["role"] == "tool":

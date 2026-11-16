@@ -233,7 +233,9 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--config")
     ap.add_argument("--repeats", type=int)
-    ap.add_argument("--per-family", type=int, default=4)
+    ap.add_argument("--item-set", choices=("base", "ext"), default="base",
+                    help="base: the 24 original dev items; ext: the pre-declared extension families")
+    ap.add_argument("--per-family", type=int, default=None, help="default 4 for base, 6 for ext")
     ap.add_argument("--run-dir", required=True)
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--resume", action="store_true")
@@ -246,14 +248,15 @@ def main():
         ap.error("--config and --repeats are required to start or resume a run")
     with open(a.config) as f:
         cfg = json.load(f)
-    items = S.dev_items(a.per_family)
+    per_family = a.per_family or (4 if a.item_set == "base" else 6)
+    items = S.item_set(a.item_set, per_family)
     rows = design(items, a.repeats)
     models = sorted(cfg["models"])
     tasks, planned = build(models, items, rows, cfg)
     os.makedirs(a.run_dir, exist_ok=True)
     stim = json.dumps({"system": S.SYSTEM, "tool": S.TOOL, "K": S.K, "paraphrases": S.PARAPHRASES, "items": items},
                       sort_keys=True)
-    manifest = {"experiment": "P1 verification-under-pressure rev3 (DEVELOPMENT families; paraphrases unrated)",
+    manifest = {"experiment": f"P1 verification-under-pressure rev3, item set {a.item_set} (builder-written families; paraphrases unrated)",
                 "stimuli_sha256": hashlib.sha256(stim.encode()).hexdigest(), "repeats": a.repeats,
                 "models": models, "design_rows": rows, "planned_keys": sorted(p[0] for p in planned)}
     if not a.resume:

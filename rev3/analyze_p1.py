@@ -9,6 +9,7 @@ against the run's frozen manifest (design rows x models) before anything is esti
 import argparse
 import json
 import os
+import sys
 from collections import Counter, defaultdict
 
 from p1v3.estimands import ESTIMANDS, estimate_by_model
@@ -64,6 +65,8 @@ def strata(tm):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--run-dir", required=True)
+    ap.add_argument("--strict", action="store_true",
+                    help="exit 1 unless the schedule matches the manifest and every E1-E4 is estimable for every model")
     a = ap.parse_args()
     with open(os.path.join(a.run_dir, "trials.jsonl")) as f:
         trials = [json.loads(x) for x in f if x.strip()]
@@ -97,6 +100,20 @@ def main():
     with open(os.path.join(a.run_dir, "analysis.md"), "w") as f:
         f.write("\n".join(md))
     print("\n".join(md))
+    if a.strict:
+        problems = []
+        for p, est in res["estimates"].items():
+            if "error" in est:
+                problems.append(f"{p}: {est['error']}")
+                continue
+            for m in man["models"]:
+                for name in ESTIMANDS:
+                    if est.get(m, {}).get(name, {}).get("estimate") is None:
+                        problems.append(f"{p} {m} {name}: not estimable")
+        if problems:
+            print("STRICT VALIDATION FAILED:\n  " + "\n  ".join(problems[:20]), file=sys.stderr)
+            sys.exit(1)
+        print("STRICT VALIDATION PASSED", file=sys.stderr)
 
 
 if __name__ == "__main__":

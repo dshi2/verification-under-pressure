@@ -129,7 +129,7 @@ Outcomes per trial:
 - `adopted_supplied`
 - validity and failure status (§8)
 
-**Primary family** (Holm), insistence vs. neutral, item-clustered, equal weight over snapshot versions and user correctness unless stated:
+**Primary family** (Holm; one row per contrast in `CONTRAST_LEDGER.csv`), insistence vs. neutral, item-clustered, equal weight over snapshot versions and user correctness unless stated:
 
 | ID | Estimand | Arms |
 |---|---|---|

@@ -55,11 +55,14 @@ Models were accessed through OpenRouter, pinned to one provider each with fallba
 
 ## Reproduce and inspect
 
-**No API key is required to inspect published aggregate results or run offline tests.** From a cloned repository:
+**No API key is required to inspect published aggregate results or run offline tests.** The plotting tests require Matplotlib; install it once in a local virtual environment, then run:
 
 ```bash
+python3 -m venv .venv
+. .venv/bin/activate
+python -m pip install "matplotlib>=3.8,<4"
 cd rev3
-python3 -m unittest discover -s tests -t . -q
+python -m unittest discover -s tests -t . -q
 ```
 
 - [Combined results](rev3/results/combined/analysis.md) and [machine-readable analysis](rev3/results/combined/analysis.json): **60 items, 12 families**.
